@@ -13,7 +13,7 @@ export function openDatabase(filename = process.env.DATABASE_PATH ?? "./echorank
     ? filename
     : isAbsolute(filename)
       ? filename
-      : resolve(process.cwd(), filename);
+      : resolve(/* turbopackIgnore: true */ process.cwd(), filename);
 
   if (databasePath !== ":memory:") {
     mkdirSync(dirname(databasePath), { recursive: true });

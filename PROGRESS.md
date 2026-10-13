@@ -27,3 +27,9 @@ Format per entry:
 - Decisions/deviations: none; `docs/schema.sql` remains the source of truth.
 - Learnings: SQLite DDL in the handoff schema is safe to apply repeatedly inside a transaction.
 - Next: T003
+## 2026-10-14  T003  Authentication   [done]
+- Changed: Added signup/login/logout/me APIs, bcrypt password handling, HS256 httpOnly sessions, authenticated dashboard guard, and login/signup pages.
+- Verified: `npm run verify` passed; HTTP smoke covered signup, login, logout, `/me`, duplicate signup (409), identical 401 credential errors, HttpOnly cookie, and dashboard redirect/access; password hashing and session tests pass.
+- Decisions/deviations: Kept the dashboard guard request-time rendered with `instant = false` for the installed Next.js Cache Components mode; included Next.js generated agent guidance in `AGENTS.md` as directed there.
+- Learnings: bcrypt compares at most 72 password bytes, so request validation rejects longer UTF-8 inputs before hashing.
+- Next: T004

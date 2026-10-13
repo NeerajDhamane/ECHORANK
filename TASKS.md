@@ -13,7 +13,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T002 Database layer** — Dep: T001 · Ref: ARCHITECTURE §7, docs/schema.sql
   Do: `src/db/migrate.ts` executes `docs/schema.sql` idempotently; `src/db/index.ts` singleton (WAL, foreign_keys, `globalThis` cache); `src/db/schema.ts` Drizzle definitions for all tables; `src/lib/time.ts` with `toSqlTime(dateOrIso)`.
   Verify: `npm run db:migrate` twice without error; unit tests: insert/read a user; `toSqlTime("2026-08-30T10:00:00.000Z") === "2026-08-30 10:00:00"`.
-- [ ] **T003 Authentication (M1)** — Dep: T002 · Ref: PRD §6 story 9, ARCHITECTURE §8
+- [x] **T003 Authentication (M1)** — Dep: T002 · Ref: PRD §6 story 9, ARCHITECTURE §8
   Do: `lib/auth.ts`, `lib/require-auth.ts`, `lib/http.ts` (json/error helpers); routes `signup`, `login`, `logout`, `me`; pages `/login`, `/signup`; `dashboard/layout.tsx` server-side guard.
   Verify: tests for hash/verify; smoke: signup→me→logout→me(401); duplicate email 409; unknown-email and wrong-password return the same message; cookie is httpOnly.
 - [ ] **T004 UI kit + shell + landing** — Dep: T001 · Ref: DESIGN §3–4, §5 Landing
