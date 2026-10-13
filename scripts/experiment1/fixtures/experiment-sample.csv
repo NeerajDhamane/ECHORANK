@@ -1,0 +1,8 @@
+trialId,model,date,seed,topic,query,rep,status,presentation,citedVersions,citedPositions,error
+t1,Fixture Model,2026-10-14,20261014,project-tools,Which source fits?,1,success,plain;faq;stats,plain,plain:1,
+t2,Fixture Model,2026-10-14,20261014,project-tools,Which source fits?,2,success,faq;plain;stats,faq,faq:1,
+t3,Fixture Model,2026-10-14,20261014,project-tools,Which source fits?,3,success,stats;faq;plain,faq,faq:2,
+t4,Fixture Model,2026-10-14,20261014,project-tools,Which source fits?,4,success,plain;stats;faq,stats,stats:2,
+t5,Fixture Model,2026-10-14,20261014,project-tools,Which source fits?,5,success,faq;stats;plain,plain,plain:3,
+t6,Fixture Model,2026-10-14,20261014,project-tools,Which source fits?,6,success,stats;plain;faq,faq,faq:3,
+t7,Fixture Model,2026-10-14,20261014,project-tools,Which source fits?,7,failed,plain;stats;faq,,,,Rate limit

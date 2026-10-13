@@ -115,7 +115,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
   Verify (tests): revoked key → 401; key A can't read user B's brand through any tool; plaintext key never retrievable.
 
 ## Phase 7 — Research (R1/R2)
-- [ ] **T032 Experiment 1 tooling (R1)** — Dep: T010, T022 · Ref: Aşkın & Baykara (2026) design (small-scale replication)
+- [x] **T032 Experiment 1 tooling (R1)** — Dep: T010, T022 · Ref: Aşkın & Baykara (2026) design (small-scale replication)
   Do: `scripts/experiment1/make-versions.ts` (generates plain/faq/stats versions per topic with a provider; or loads hand-written versions), manipulation check via `extractFeatures`, `run.ts` (shuffles source order every repetition, parses `[Source N]` citations, throttled, resumable, writes `research/trials.csv` with model/date/seed), `analyze.ts` (per-version rate + Wilson 95% CI, chi-square goodness-of-fit, position-effect table, per-model, writes `research/results.json` + `research/report.md`; use `jstat` or an equivalent tiny dependency — justify in PROGRESS). Include `fixtures/experiment-sample.csv` for tests.
   Verify (tests): `wilson(50,100)` ≈ 0.404–0.596; analysis of the sample CSV matches hand-computed rates. **Live runs are human task H5.**
 - [ ] **T033 Research page (R1)** — Dep: T032

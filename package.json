@@ -14,7 +14,10 @@
     "test": "vitest run",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
     "seed": "tsx scripts/seed.ts",
-    "smoke": "tsx scripts/smoke.ts"
+    "smoke": "tsx scripts/smoke.ts",
+    "experiment1:versions": "tsx scripts/experiment1/make-versions.ts",
+    "experiment1:run": "tsx scripts/experiment1/run.ts",
+    "experiment1:analyze": "tsx scripts/experiment1/analyze.ts"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.6",

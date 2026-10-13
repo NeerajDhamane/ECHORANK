@@ -201,3 +201,9 @@ Format per entry:
 - Decisions/deviations: Updated the task's legacy `@modelcontextprotocol/sdk` package reference to the current official `@modelcontextprotocol/server` v2.3.1 API after verifying current SDK and Claude Code/Cursor connection docs. Added schema migration 004 for daily API-key usage counts.
 - Learnings: Building the MCP server per request lets its tool handlers close over only the authenticated user's ID and key ID.
 - Next: T032
+## 2026-10-14  T032  Experiment 1 tooling  [done]
+- Changed: Added a preregistered five-topic synthetic-source design, provider-based version generator with feature manipulation checks, a human-reviewed-source gate, seeded resumable trials, and per-model Wilson intervals, chi-square analysis, and position-effect reporting. Added the sample CSV fixture and package scripts.
+- Verified: `npm run verify` passed: typecheck, lint, 138 tests across 45 files, and production build. Tests hand-check fixture citation rates and chi-square output. No live provider calls were made.
+- Decisions/deviations: Used the equivalent closed-form chi-square survival probability for df=2 instead of adding `jstat`; source drafts are marked unreviewed and must pass human review before any live trial.
+- Learnings: Deriving each trial's shuffle from the preregistered seed and trial ID lets interrupted runs resume without changing earlier source positions.
+- Next: T033
