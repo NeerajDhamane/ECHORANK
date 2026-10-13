@@ -85,7 +85,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T023 Crawlability audit (M17)** — Dep: T005
   Do: `lib/safe-fetch.ts` (`isPrivate`, DNS resolve, http(s) only, timeout, size cap), `lib/crawl-audit.ts` (10 checks: status, speed<1500ms, robots allows AI bots [GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, PerplexityBot, Google-Extended, CCBot], no noindex, content without JS ≥150 words, title+description+canonical, headings, JSON-LD types, sitemap, llms.txt), API, page (score ring, checklist with detail+fix, history). Wording: blocking a bot is a business choice — ask "intentional?", don't scold. **Inject the fetch function** so tests don't touch the network.
   Verify (tests): `http://localhost`, `http://169.254.169.254`, `http://10.0.0.1` rejected; robots parser flags `GPTBot / Disallow: /`; empty `<div id="root">` page fails the no-JS check.
-- [ ] **T024 llms.txt / robots.txt generator (M23)** — Dep: T023
+- [x] **T024 llms.txt / robots.txt generator (M23)** — Dep: T023
   Do: `lib/llms-txt.ts` builders + page (form, live preview, Copy/Download, "verify with Crawl audit"). Copy must not claim llms.txt guarantees citations.
   Verify: generated robots.txt parses with the T023 parser; blocking a bot yields exactly that bot's `Disallow: /`.
 - [ ] **T025 Content brief generator (M18)** — Dep: T019, T022

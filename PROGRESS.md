@@ -153,3 +153,9 @@ Format per entry:
 - Decisions/deviations: Robots HTTP 404 is treated as no published restrictions; an unavailable response other than 404 is reported as unknown/failed. The tool checks one page and same-origin robots/sitemap/llms endpoints only; it is explicitly described as a lightweight audit, not a full crawler.
 - Learnings: Redirect targets need the same URL and DNS checks as the original request, and the initial HTML word count must exclude script/style contents.
 - Next: T024
+## 2026-10-14  T024  llms.txt / robots.txt generator   [done]
+- Changed: Replaced the placeholder with a live generator for llms.txt and robots.txt. Site name/summary, editable key-page rows, optional about/contact URL, and per-agent allow/deny choices feed separate previews with Copy, Download, and a Crawl audit link. Robots output includes individual groups for seven audited agents plus Applebot-Extended and a wildcard allow group.
+- Verified: `npm run verify` passed (typecheck, lint, 100 tests, production build). Builder tests verify sanitized single-line metadata, HTTP(S)-only links, sitemap URL construction, and that the generated robots file passes T023's parser with only the selected bot blocked.
+- Decisions/deviations: The generator creates local drafts only; users review and upload them to their own site's root. The UI states that llms.txt is a proposed convention and does not guarantee citations or improved visibility.
+- Learnings: Separate per-agent groups let an explicit deny override the wildcard allow without unintentionally changing other crawlers' access.
+- Next: T025
