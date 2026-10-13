@@ -1,11 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import Link from "next/link";
 import type { gapOpportunities } from "@/lib/gaps";
 
 type GapItem = ReturnType<typeof gapOpportunities>[number];
 
-export function GapsWorkspace({ items, simulatedIncluded }: { items: GapItem[]; simulatedIncluded: boolean }) {
+export function GapsWorkspace({ items, simulatedIncluded, brandId }: { items: GapItem[]; simulatedIncluded: boolean; brandId: string }) {
   const actionable = items.filter((item) => !item.lowData);
   return <div className="workspace-page gaps-page">
     <div className="page-heading"><p className="eyebrow">BRAND WORKSPACE</p><h1>Gap opportunities</h1><p>Prompts where tracked competitors appear while your brand is less visible. Opportunity is an observed association, not a prediction.</p></div>
@@ -16,7 +17,7 @@ export function GapsWorkspace({ items, simulatedIncluded }: { items: GapItem[]; 
         <td>{item.yourRate}% <small>n={item.yourMentions}/{item.answers}</small></td>
         <td><b>{item.topRival}</b><small>{item.rivalRate}% · n={item.rivalMentions}/{item.answers}</small></td>
         <td><div className="gap-score"><div className="gap-score-track"><span style={{ width: `${Math.min(item.opportunity * 100, 100)}%` }} /></div><b>{(item.opportunity * 100).toFixed(1)}%</b><small>n={item.answers}</small></div></td>
-        <td><div className="gap-actions"><button type="button" disabled title="Available after T025 (Content brief generator)">Generate brief</button><button type="button" disabled title="Available after T026 (Discovery feed)">Find discussions</button></div></td>
+        <td><div className="gap-actions"><Link href={`/dashboard/${encodeURIComponent(brandId)}/tools/briefs?promptId=${encodeURIComponent(item.promptId)}`}>Generate brief</Link><button type="button" disabled title="Available after T026 (Discovery feed)">Find discussions</button></div></td>
       </tr>)}</tbody></table></div> : <EmptyState title="No gap opportunities in this scope" description="A prompt appears here when at least one active competitor was mentioned and your brand was not visible in every answer. Adjust the current filters or collect more tracking data." />}
       <p className="gaps-method">Score = top rival mention rate × (1 − your mention rate). Rows with fewer than 3 answers are greyed as low data. No search volume is inferred.</p>
     </CardContent></Card>

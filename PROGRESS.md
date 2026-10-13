@@ -159,3 +159,9 @@ Format per entry:
 - Decisions/deviations: The generator creates local drafts only; users review and upload them to their own site's root. The UI states that llms.txt is a proposed convention and does not guarantee citations or improved visibility.
 - Learnings: Separate per-agent groups let an explicit deny override the wildcard allow without unintentionally changing other crawlers' access.
 - Next: T025
+## 2026-10-14  T025  Content brief generator   [done]
+- Changed: Added a prompt-scoped evidence collector for tracked rival names/descriptions and cited domains, a deterministic [FILL IN]-safe brief skeleton, optional real-provider enrichment when Groq/Gemini keys exist, an authenticated owned-brand generation API with brief persistence, an escaped-text markdown workspace with copy/download and Content score link, and wired the Gaps action to the matching prompt.
+- Verified: `npm run verify` passed (typecheck, lint, 102 tests, production build). Offline tests confirm deterministic briefs name the fixture rival and domain, retain rival snippet evidence, use [FILL IN] for unknown brand claims, scope data to the selected prompt, and return no context for an unrelated brand.
+- Decisions/deviations: Provider enrichment falls back to the deterministic skeleton if a configured real provider fails. No provider is invoked or required by tests.
+- Learnings: Stored brand IDs on mention records make it possible to select only active tracked competitors when deriving evidence sentences.
+- Next: T026

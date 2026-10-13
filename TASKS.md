@@ -88,7 +88,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T024 llms.txt / robots.txt generator (M23)** — Dep: T023
   Do: `lib/llms-txt.ts` builders + page (form, live preview, Copy/Download, "verify with Crawl audit"). Copy must not claim llms.txt guarantees citations.
   Verify: generated robots.txt parses with the T023 parser; blocking a bot yields exactly that bot's `Disallow: /`.
-- [ ] **T025 Content brief generator (M18)** — Dep: T019, T022
+- [x] **T025 Content brief generator (M18)** — Dep: T019, T022
   Do: `lib/briefs.ts`: Tier 1 deterministic skeleton from the prompt + rival snippets + cited domains (no key needed); Tier 2 LLM enrichment only if a real provider key exists (prompt must say "do not invent facts; mark unknown as [FILL IN]"); API, page (markdown render, Copy/Download, "Score my draft" link); wire the Gaps button.
   Verify (tests): no-key path returns a brief naming the actual rival and domains from fixtures.
 

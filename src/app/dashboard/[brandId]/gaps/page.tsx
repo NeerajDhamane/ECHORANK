@@ -19,5 +19,5 @@ export default async function GapsPage({ params, searchParams }: PageProps) {
   const parsed = overviewQuerySchema.safeParse(values);
   const query = parsed.success ? parsed.data : overviewQuerySchema.parse({});
   const scope = overviewScope(brandId, query);
-  return <GapsWorkspace items={gapOpportunities(scope)} simulatedIncluded={scope.includeSimulated === true} />;
+  return <GapsWorkspace items={gapOpportunities(scope)} simulatedIncluded={scope.includeSimulated === true} brandId={brandId} />;
 }
