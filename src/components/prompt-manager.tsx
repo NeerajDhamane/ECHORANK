@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { PromptRecord, PromptStatus, TopicRecord } from "@/lib/prompt-access";
 import type { PromptSuggestion } from "@/lib/prompt-suggestions";
+import type { TagRecord } from "@/lib/tags";
 
 type PromptTab = "active" | "suggested" | "inactive";
 type PromptWithTopic = PromptRecord;
@@ -16,7 +17,7 @@ async function errorFrom(response: Response): Promise<string> {
   return "Unable to complete that request.";
 }
 
-export function PromptManager({ brandId, initialPrompts, initialTopics, suggestions }: { brandId: string; initialPrompts: PromptRecord[]; initialTopics: TopicRecord[]; suggestions: PromptSuggestion[] }) {
+export function PromptManager({ brandId, initialPrompts, initialTopics, suggestions, initialTags, initialPromptTags }: { brandId: string; initialPrompts: PromptRecord[]; initialTopics: TopicRecord[]; suggestions: PromptSuggestion[]; initialTags: TagRecord[]; initialPromptTags: Record<string, TagRecord[]> }) {
   const [prompts, setPrompts] = useState(initialPrompts);
   const [topics, setTopics] = useState(initialTopics);
   const [tab, setTab] = useState<PromptTab>("active");
@@ -28,6 +29,9 @@ export function PromptManager({ brandId, initialPrompts, initialTopics, suggesti
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [tags, setTags] = useState(initialTags);
+  const [promptTags, setPromptTags] = useState(initialPromptTags);
+  const [tagDrafts, setTagDrafts] = useState<Record<string, string>>({});
 
   const visiblePrompts = useMemo(() => prompts.filter((prompt) => prompt.status === tab), [prompts, tab]);
   const grouped = useMemo(() => {
@@ -104,6 +108,50 @@ export function PromptManager({ brandId, initialPrompts, initialTopics, suggesti
     finally { setPendingId(null); }
   }
 
+  async function attachTag(promptId: string, tag: TagRecord) {
+    if ((promptTags[promptId] ?? []).some((item) => item.id === tag.id)) return;
+    const response = await fetch(`/api/brands/${brandId}/prompts/${promptId}/tags`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ tagId: tag.id }) });
+    if (!response.ok) { setError(await errorFrom(response)); return; }
+    setPromptTags((current) => ({ ...current, [promptId]: [...(current[promptId] ?? []), tag] })); setNotice("Tag added to prompt.");
+  }
+
+  async function addTag(promptId: string) {
+    const name = (tagDrafts[promptId] ?? "").trim();
+    if (!name) return;
+    setError(""); setNotice(""); setPendingId(`tag:${promptId}`);
+    try {
+      const existing = tags.find((item) => item.name.toLowerCase() === name.toLowerCase());
+      let tag = existing;
+      if (!tag) {
+        const response = await fetch(`/api/brands/${brandId}/tags`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name }) });
+        if (!response.ok) { setError(await errorFrom(response)); return; }
+        tag = await response.json() as TagRecord;
+        setTags((current) => current.some((item) => item.id === tag!.id) ? current : [...current, tag!].sort((a, b) => a.name.localeCompare(b.name)));
+      }
+      await attachTag(promptId, tag);
+      setTagDrafts((current) => ({ ...current, [promptId]: "" }));
+    } catch { setError("Could not reach EchoRank. Please try again."); }
+    finally { setPendingId(null); }
+  }
+
+  async function detachTag(promptId: string, tag: TagRecord) {
+    try {
+      const response = await fetch(`/api/brands/${brandId}/prompts/${promptId}/tags`, { method: "DELETE", headers: { "content-type": "application/json" }, body: JSON.stringify({ tagId: tag.id }) });
+      if (!response.ok) { setError(await errorFrom(response)); return; }
+      setPromptTags((current) => ({ ...current, [promptId]: (current[promptId] ?? []).filter((item) => item.id !== tag.id) })); setNotice("Tag removed from prompt.");
+    } catch { setError("Could not reach EchoRank. Please try again."); }
+  }
+
+  async function removeTag(tag: TagRecord) {
+    try {
+      const response = await fetch(`/api/brands/${brandId}/tags/${tag.id}`, { method: "DELETE" });
+      if (!response.ok) { setError(await errorFrom(response)); return; }
+      setTags((current) => current.filter((item) => item.id !== tag.id));
+      setPromptTags((current) => Object.fromEntries(Object.entries(current).map(([id, items]) => [id, items.filter((item) => item.id !== tag.id)])));
+      setNotice(`Tag “${tag.name}” deleted from your account.`);
+    } catch { setError("Could not reach EchoRank. Please try again."); }
+  }
+
   const counts = { active: prompts.filter((item) => item.status === "active").length, suggested: suggestions.length, inactive: prompts.filter((item) => item.status === "inactive").length };
   return <div className="workspace-page prompts-page"><div className="page-heading prompts-heading"><div><p className="eyebrow">TRACKING SETUP</p><h1>Prompts</h1><p>Manage the questions you want to track and organize them by topic.</p></div><div className="prompt-page-actions"><Button variant="secondary" onClick={() => setTopicFormOpen((open) => !open)}><BookOpen size={15} /> Add topic</Button><Button onClick={() => setFormOpen((open) => !open)}><Plus size={15} /> Add prompt</Button></div></div>
     {error && <p className="form-error prompt-feedback" role="alert">{error}</p>}{notice && <p className="form-success prompt-feedback" role="status">{notice}</p>}
@@ -114,9 +162,10 @@ export function PromptManager({ brandId, initialPrompts, initialTopics, suggesti
       {tab === "suggested" ? suggestions.length ? <div className="suggestion-groups">{[...new Set(suggestions.map((item) => item.intent))].map((intent) => <div className="suggestion-group" key={intent}><h2>{intentLabels[intent]}</h2>{suggestions.filter((item) => item.intent === intent).map((suggestion) => <article className="suggestion-card" key={suggestion.id}><div><p>{suggestion.text}</p><div className="suggestion-meta"><Badge variant="neutral">{suggestion.tier}</Badge><span>{suggestion.topicName}</span></div></div><Button size="sm" onClick={() => void addSuggestion(suggestion)} loading={pendingId === suggestion.id}><Plus size={14} /> Add</Button></article>)}</div>)}</div> : <EmptyState icon={<Sparkles size={19} />} title="No new suggestions" description="Your current prompt list already covers the available templates. You can add a prompt of your own at any time." />
         : grouped.length ? <div className="prompt-groups">{grouped.map((group) => <details className="prompt-topic-group" key={group.id} open><summary><span>{group.title}</span><Badge variant="neutral">{group.items.length}</Badge><ChevronDown size={15} /></summary><div className="prompt-topic-items">{group.items.map((prompt) => <article className="prompt-row" key={prompt.id}>
           {editingId === prompt.id ? <form className="prompt-edit-form" onSubmit={(event) => { event.preventDefault(); void update(prompt.id, { text: editingText }); }}><Textarea aria-label="Edit prompt" maxLength={500} minLength={3} required value={editingText} onChange={(event) => setEditingText(event.target.value)} /><div><Button size="sm" type="submit" loading={pendingId === prompt.id}><Check size={14} /> Save</Button><Button size="sm" variant="ghost" type="button" onClick={() => setEditingId(null)}><X size={14} /> Cancel</Button></div></form>
-            : <><div className="prompt-row-main"><p>{prompt.text}</p><div className="prompt-evidence"><span>Visibility <b>—</b></span><span>Rank <b>—</b></span><span>Sentiment <b className="sentiment-empty">—</b></span><span className="locale-chip">{prompt.locale ?? "global"}</span></div></div><div className="prompt-row-actions"><button type="button" aria-label={`Edit prompt: ${prompt.text}`} title="Edit" onClick={() => { setEditingId(prompt.id); setEditingText(prompt.text); }}><Edit3 size={15} /></button><button type="button" aria-label={tab === "active" ? `Deactivate prompt: ${prompt.text}` : `Activate prompt: ${prompt.text}`} title={tab === "active" ? "Deactivate" : "Activate"} disabled={pendingId === prompt.id} onClick={() => void update(prompt.id, { status: tab === "active" ? "inactive" : "active" })}><Check size={15} /></button><button type="button" className="remove-prompt" aria-label={`Remove prompt: ${prompt.text}`} title="Remove" disabled={pendingId === prompt.id} onClick={() => void remove(prompt.id)}><Trash2 size={15} /></button></div></>}
+            : <><div className="prompt-row-main"><p>{prompt.text}</p><div className="prompt-evidence"><span>Visibility <b>—</b></span><span>Rank <b>—</b></span><span>Sentiment <b className="sentiment-empty">—</b></span><span className="locale-chip">{prompt.locale ?? "global"}</span></div><div className="prompt-tag-chips">{(promptTags[prompt.id] ?? []).map((tag) => <span className="prompt-tag-chip" key={tag.id}>{tag.name}<button type="button" aria-label={`Remove ${tag.name} tag from prompt`} onClick={() => void detachTag(prompt.id, tag)}><X size={11} /></button></span>)}<form onSubmit={(event) => { event.preventDefault(); void addTag(prompt.id); }}><input aria-label="Add or find tag" list={`prompt-tag-options-${prompt.id}`} maxLength={40} value={tagDrafts[prompt.id] ?? ""} onChange={(event) => setTagDrafts((current) => ({ ...current, [prompt.id]: event.target.value }))} placeholder="+ Add tag" /><datalist id={`prompt-tag-options-${prompt.id}`}>{tags.map((tag) => <option key={tag.id} value={tag.name} />)}</datalist><button type="submit" aria-label="Add tag" disabled={!tagDrafts[prompt.id]?.trim() || pendingId === `tag:${prompt.id}`}><Plus size={13} /></button></form></div></div><div className="prompt-row-actions"><button type="button" aria-label={`Edit prompt: ${prompt.text}`} title="Edit" onClick={() => { setEditingId(prompt.id); setEditingText(prompt.text); }}><Edit3 size={15} /></button><button type="button" aria-label={tab === "active" ? `Deactivate prompt: ${prompt.text}` : `Activate prompt: ${prompt.text}`} title={tab === "active" ? "Deactivate" : "Activate"} disabled={pendingId === prompt.id} onClick={() => void update(prompt.id, { status: tab === "active" ? "inactive" : "active" })}><Check size={15} /></button><button type="button" className="remove-prompt" aria-label={`Remove prompt: ${prompt.text}`} title="Remove" disabled={pendingId === prompt.id} onClick={() => void remove(prompt.id)}><Trash2 size={15} /></button></div></>}
         </article>)}</div></details>)}</div> : <EmptyState icon={<BookOpen size={19} />} title={tab === "active" ? "No active prompts yet" : "No inactive prompts"} description={tab === "active" ? "Add a question or pick a suggestion to start building your tracking list." : "Prompts you deactivate will appear here. You can reactivate them whenever you need."} action={tab === "active" ? <Button onClick={() => setFormOpen(true)}><Plus size={15} /> Add prompt</Button> : undefined} />}
       </section>
+    {tags.length > 0 && <details className="prompt-tag-management"><summary>Manage account tags <Badge variant="neutral">{tags.length}</Badge></summary><div>{tags.map((tag) => <span key={tag.id}>{tag.name}<button type="button" aria-label={`Delete ${tag.name} tag`} onClick={() => void removeTag(tag)}>Delete</button></span>)}</div></details>}
     <p className="prompt-footnote">Visibility, rank, and sentiment show “—” until a prompt has tracking results.</p>
   </div>;
 }

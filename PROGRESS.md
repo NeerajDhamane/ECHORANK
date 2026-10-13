@@ -135,3 +135,9 @@ Format per entry:
 - Decisions/deviations: Sentiment is displayed on a 0–100 scale from recorded numeric scores (mapped from -1..1), with sentiment labels as fallback. Optional radar chart omitted.
 - Learnings: Period change is measured in percentage points, and is n/a only when the prior window contains no successful answers.
 - Next: T021
+## 2026-10-14  T021  Tags   [done]
+- Changed: Added authenticated per-user tag list/create/delete APIs and prompt tag attach/detach routes, enforcing ownership on each brand-scoped request. Added case-insensitive duplicate reuse, prompt-row chips with tag autocomplete/create, account tag deletion, and retained the global URL-backed tag filter.
+- Verified: `npm run verify` passed (typecheck, lint, 66 tests, production build). Tag tests prove case-insensitive uniqueness per user, ownership checks, and that the same tag scope filters Overview, Chats, Sources, and Gaps. Deleting a tag clears its associations while prompts and chat history remain.
+- Decisions/deviations: Tags are managed per user and exposed through the authenticated brand workspace path so each endpoint can verify workspace ownership. A repeated case-insensitive create returns the existing tag.
+- Learnings: Since all analytic views share `whereClause`, the existing `Scope.tagId` predicate propagates consistently without per-view filter logic.
+- Next: T022

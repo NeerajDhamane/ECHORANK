@@ -74,7 +74,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T020 Ranking (M19)** — Dep: T015
   Do: ranking API + page: visibility, Δ vs equal-length previous window ("n/a" if none), per-brand sentiment (from `brands_found`), avg rank, mentions; CSV export (`lib/csv.ts`, formula-injection safe).
   Verify: Δ uses equal windows (test); CSV escapes `=cmd`.
-- [ ] **T021 Tags (M20)** — Dep: T006, T014
+- [x] **T021 Tags (M20)** — Dep: T006, T014
   Do: tags API (per-user, case-insensitive unique), chip editor on prompt rows, top-bar tag filter feeding `Scope.tagId` (`prompt_id IN (SELECT prompt_id FROM prompt_tags WHERE tag_id=@tagId)`).
   Verify: tag filter changes Overview, Chats, Sources, Gaps consistently; deleting a tag keeps prompts.
 

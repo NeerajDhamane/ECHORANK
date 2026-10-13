@@ -5,12 +5,13 @@ import { getCurrentUser } from "@/lib/require-auth";
 import { generatePromptSuggestions } from "@/lib/prompt-suggestions";
 import { getCompetitors } from "@/lib/brand-access";
 import { getBrandTopics, listPrompts } from "@/lib/prompt-access";
+import { listPromptTags, listTags } from "@/lib/tags";
 
 export default async function PromptsPage({ params }: { params: Promise<{ brandId: string }> }) {
   const { brandId } = await params;
   const user = await getCurrentUser();
   const brand = user ? getOwnedBrand(brandId, user.id) : null;
-  if (!brand) notFound();
+  if (!user || !brand) notFound();
   const prompts = listPrompts(brandId);
   const topics = getBrandTopics(brandId);
   const suggestions = generatePromptSuggestions({
@@ -19,5 +20,5 @@ export default async function PromptsPage({ params }: { params: Promise<{ brandI
     competitors: getCompetitors(brandId).map(({ id, name }) => ({ id, name })),
     existingPrompts: prompts.map(({ text }) => text),
   });
-  return <PromptManager brandId={brandId} initialPrompts={prompts} initialTopics={topics} suggestions={suggestions} />;
+  return <PromptManager brandId={brandId} initialPrompts={prompts} initialTopics={topics} suggestions={suggestions} initialTags={listTags(user.id)} initialPromptTags={listPromptTags(brandId, user.id)} />;
 }
