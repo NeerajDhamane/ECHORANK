@@ -1,0 +1,2 @@
+import type { ReactNode } from "react";
+export function Stat({ label, value, detail, sampleSize, icon }: { label: string; value: ReactNode; detail?: string; sampleSize?: number; icon?: ReactNode }) { return <section className="ui-card ui-stat"><div className="stat-heading"><span>{label}</span>{icon}</div><strong>{value}</strong>{detail && <p>{detail}</p>}{sampleSize !== undefined && <small>Based on {sampleSize} observations</small>}</section>; }

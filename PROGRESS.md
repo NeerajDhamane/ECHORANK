@@ -33,3 +33,9 @@ Format per entry:
 - Decisions/deviations: Kept the dashboard guard request-time rendered with `instant = false` for the installed Next.js Cache Components mode; included Next.js generated agent guidance in `AGENTS.md` as directed there.
 - Learnings: bcrypt compares at most 72 password bytes, so request validation rejects longer UTF-8 inputs before hashing.
 - Next: T004
+## 2026-10-14  T004  UI kit + shell + landing   [done]
+- Changed: Added reusable UI primitives, responsive evidence-first landing page, authenticated brand workspace shell with URL query filters, responsive navigation, and placeholders for every workspace route.
+- Verified: `npm run verify` passed (typecheck, lint, 5 tests, production build); build listed all 14 brand workspace destinations. Visible keyboard focus rings and reduced-motion handling are included.
+- Decisions/deviations: Workspace pages remain honest placeholders pending their dependent data tasks; query filters update the URL only.
+- Learnings: Next.js `usePathname` under Cache Components needs Suspense for unresolved dynamic brand routes.
+- Next: T005

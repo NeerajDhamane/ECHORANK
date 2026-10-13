@@ -16,7 +16,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T003 Authentication (M1)** — Dep: T002 · Ref: PRD §6 story 9, ARCHITECTURE §8
   Do: `lib/auth.ts`, `lib/require-auth.ts`, `lib/http.ts` (json/error helpers); routes `signup`, `login`, `logout`, `me`; pages `/login`, `/signup`; `dashboard/layout.tsx` server-side guard.
   Verify: tests for hash/verify; smoke: signup→me→logout→me(401); duplicate email 409; unknown-email and wrong-password return the same message; cookie is httpOnly.
-- [ ] **T004 UI kit + shell + landing** — Dep: T001 · Ref: DESIGN §3–4, §5 Landing
+- [x] **T004 UI kit + shell + landing** — Dep: T001 · Ref: DESIGN §3–4, §5 Landing
   Do: `components/ui/*` (Button, Input, Card, Badge, Tabs, Stat, EmptyState, Banner, Skeleton, Toast); workspace layout (`dashboard/[brandId]/layout.tsx`) with top bar + left nav (filters are URL params, not yet functional); real landing page per DESIGN.
   Verify: all nav routes render placeholders; typecheck/lint clean; keyboard focus rings visible.
 - [ ] **T005 Brands & competitors (M2)** — Dep: T003, T004 · Ref: ARCHITECTURE §6, PRD §6 stories 1,9
