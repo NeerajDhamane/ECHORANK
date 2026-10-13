@@ -30,7 +30,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T007 Mention detection (M5a)** — Dep: T002 · Ref: PRD §7
   Do: `lib/analysis/mentions.ts` `detectBrands` — case-insensitive, **lookaround boundaries** (not `\b`), aliases, first-mention index → ascending position.
   Verify (tests): "Try Monday.com or Asana" → Monday.com pos 1; alias counts as same brand; absent brand not returned; punctuation-adjacent names ("(Asana)") match; `C++`-style names don't crash (escaped).
-- [ ] **T008 Sentiment (M6)** — Dep: T002
+- [x] **T008 Sentiment (M6)** — Dep: T002
   Do: `lib/analysis/sentiment.ts` `scoreSentiment(text, mentionIndex)` — window −160/+260 chars, positive/negative lexicons, negation flip ("not reliable"), score −1..1 → label thresholds ±0.15.
   Verify (tests): "Acme is not reliable" → negative; "Acme is a top, trusted choice" → positive; neutral text → neutral; no mention → caller stores null.
 - [ ] **T009 Citations (M7)** — Dep: T002

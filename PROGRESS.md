@@ -57,3 +57,9 @@ Format per entry:
 - Decisions/deviations: none.
 - Learnings: Ranking each brand by its earliest canonical or alias match avoids alias order changing reported position.
 - Next: T008
+## 2026-10-14  T008  Sentiment   [done]
+- Changed: Added a bounded-window sentiment scorer with positive/negative lexicons, nearby negation flips, normalized scores from −1 to 1, ±0.15 labels, and null for absent/invalid mention positions.
+- Verified: `npm run verify` passed (typecheck, lint, 21 tests, production build). Tests cover the requested negative/positive/neutral examples, missing mentions, and the ±160/+260 character window.
+- Decisions/deviations: none; callers can persist the returned null when no mention was detected.
+- Learnings: Short negation windows and clause breaks keep a nearby negator from flipping later contrast clauses.
+- Next: T009
