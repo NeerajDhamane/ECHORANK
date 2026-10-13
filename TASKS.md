@@ -82,7 +82,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T022 Content score (M8)** — Dep: T005
   Do: `lib/analysis/content-features.ts` (`extractFeatures`, `scoreContent`: 9 weighted checks with fixes — FAQ pairs≥3 (20), Flesch≥50 (20), avg sentence ≤22 (10), numericRatio ≤0.06 (10), headings≥3 (10), bullets≥3 (5), JSON-LD (15), words≥300 (5), passive ≤0.25 (5)); API + page (paste/URL, score ring, passed/failed lists, history with delta). URL mode uses `safeFetch` (from T023; until then paste-only).
   Verify (tests): FAQ-style fixture scores higher than a statistics-dense fixture; each failed check returns its `fix`.
-- [ ] **T023 Crawlability audit (M17)** — Dep: T005
+- [x] **T023 Crawlability audit (M17)** — Dep: T005
   Do: `lib/safe-fetch.ts` (`isPrivate`, DNS resolve, http(s) only, timeout, size cap), `lib/crawl-audit.ts` (10 checks: status, speed<1500ms, robots allows AI bots [GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, PerplexityBot, Google-Extended, CCBot], no noindex, content without JS ≥150 words, title+description+canonical, headings, JSON-LD types, sitemap, llms.txt), API, page (score ring, checklist with detail+fix, history). Wording: blocking a bot is a business choice — ask "intentional?", don't scold. **Inject the fetch function** so tests don't touch the network.
   Verify (tests): `http://localhost`, `http://169.254.169.254`, `http://10.0.0.1` rejected; robots parser flags `GPTBot / Disallow: /`; empty `<div id="root">` page fails the no-JS check.
 - [ ] **T024 llms.txt / robots.txt generator (M23)** — Dep: T023

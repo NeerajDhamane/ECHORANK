@@ -147,3 +147,9 @@ Format per entry:
 - Decisions/deviations: T022 is paste-only until T023 provides the SSRF-safe fetcher; API rejects URL input rather than fetching unsafely. Scoring remains a transparent heuristic and does not claim to predict citations or rankings.
 - Learnings: Persisting score attempts gives a direct before/after signal while preserving the underlying content and feature snapshot for future history views.
 - Next: T023
+## 2026-10-14  T023  Crawlability audit   [done]
+- Changed: Added `safeFetch` with HTTP(S)/standard-port restrictions, DNS public-address checks, private-range and local-host blocking, redirect revalidation, GET-only requests, an 8-second timeout, and a 2 MB response cap. Added the ten-check crawl audit, robots rules parsing for seven AI crawlers, ownership-checked API, persisted score history/deltas, and responsive results page with fixes.
+- Verified: `npm run verify` passed (typecheck, lint, 97 tests, production build). Offline tests cover localhost, loopback, link-local metadata, RFC1918/CGNAT/documentation/private IPv6, private DNS resolutions, redirect revalidation, size cap, method restriction, robots allow/disallow precedence, empty JS-shell HTML, failed-check fixes, route ownership, and saved audit history.
+- Decisions/deviations: Robots HTTP 404 is treated as no published restrictions; an unavailable response other than 404 is reported as unknown/failed. The tool checks one page and same-origin robots/sitemap/llms endpoints only; it is explicitly described as a lightweight audit, not a full crawler.
+- Learnings: Redirect targets need the same URL and DNS checks as the original request, and the initial HTML word count must exclude script/style contents.
+- Next: T024
