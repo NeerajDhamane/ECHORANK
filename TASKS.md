@@ -107,7 +107,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T029 Locale tracking (M25)** — Dep: T011
   Do: locale picker per prompt, locale hint in provider call, `chats.locale` stored at run time, locale filter in `Scope`, UI label "locale-hinted (approximate)".
   Verify: editing a prompt's locale never rewrites old chats (test); filter changes all views.
-- [ ] **T030 Public checker (M24)** — Dep: T010, T007–T009
+- [x] **T030 Public checker (M24)** — Dep: T010, T007–T009
   Do: `/check` page + `POST /api/public/check`: per-IP limit (5/hour via `public_check_log`), global daily cap (200), input limits, 24h cache (`public_check_cache`), honeypot field + min-time check, 3 samples from **one** provider, shows sample size and variability; if no keys → loud "demo mode: simulated".
   Verify (tests): 6th request/hour from one IP → 429; cached repeat makes zero provider calls.
 - [ ] **T031 API keys, REST v1, MCP (M26)** — Dep: T014, T018, T019

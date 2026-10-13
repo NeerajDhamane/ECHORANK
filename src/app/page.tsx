@@ -12,7 +12,7 @@ export default function Home() {
     <main className="landing-page">
       <header className="landing-header">
         <Link className="brand-lockup" href="/" aria-label="EchoRank home"><span className="echo-mark" aria-hidden="true"><i /></span><span>EchoRank</span></Link>
-        <nav aria-label="Main navigation" className="landing-nav"><Link href="#how-it-works">How it works</Link><Link href="/checker">Public checker</Link><Link href="/login">Log in</Link><Link className="button button-primary button-sm" href="/signup">Get started <ArrowRight size={15} /></Link></nav>
+        <nav aria-label="Main navigation" className="landing-nav"><Link href="#how-it-works">How it works</Link><Link href="/check">Public checker</Link><Link href="/login">Log in</Link><Link className="button button-primary button-sm" href="/signup">Get started <ArrowRight size={15} /></Link></nav>
       </header>
 
       <section className="landing-hero">
@@ -20,7 +20,7 @@ export default function Home() {
           <p className="eyebrow"><span className="live-dot" /> Evidence-first AI visibility</p>
           <h1>Does AI recommend <span>your brand?</span></h1>
           <p className="hero-description">See how AI platforms describe your brand, what sources shape their answers, and how your visibility changes over time.</p>
-          <div className="hero-actions"><Link className="button button-primary" href="/signup">Start tracking <ArrowRight size={17} /></Link><Link className="button button-secondary" href="/checker">Try the public checker</Link></div>
+          <div className="hero-actions"><Link className="button button-primary" href="/signup">Start tracking <ArrowRight size={17} /></Link><Link className="button button-secondary" href="/check">Try the public checker</Link></div>
           <p className="hero-note"><Check size={15} /> Built around repeatable answers and traceable sources</p>
         </div>
         <div className="evidence-card" aria-label="Illustration of an AI answer with cited sources">
@@ -45,7 +45,7 @@ export default function Home() {
       </section>
 
       <section className="landing-cta"><div><p className="eyebrow">Start with a question</p><h2>Make your AI presence<br />easier to understand.</h2></div><Link className="button button-primary" href="/signup">Create your workspace <ArrowRight size={17} /></Link></section>
-      <footer className="landing-footer"><Link className="brand-lockup" href="/"><span className="echo-mark" aria-hidden="true"><i /></span><span>EchoRank</span></Link><span>Student project · not affiliated with any commercial vendor.</span><nav aria-label="Footer navigation"><Link href="/checker">Public checker</Link><Link href="/login">Log in</Link></nav></footer>
+      <footer className="landing-footer"><Link className="brand-lockup" href="/"><span className="echo-mark" aria-hidden="true"><i /></span><span>EchoRank</span></Link><span>Student project · not affiliated with any commercial vendor.</span><nav aria-label="Footer navigation"><Link href="/check">Public checker</Link><Link href="/login">Log in</Link></nav></footer>
     </main>
   );
 }

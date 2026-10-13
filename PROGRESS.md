@@ -189,3 +189,9 @@ Format per entry:
 - Decisions/deviations: Existing prompt/chat locale columns, patch API, shared analytics Scope, and global filter already supported locale; no schema or dependency changes were needed. Legacy BCP-47 prompt values remain selectable and map to their country for provider hints.
 - Learnings: Saving locale on each chat row is what lets a later prompt edit preserve the meaning of historical analytics.
 - Next: T030
+## 2026-10-14  T030  Public checker   [done]
+- Changed: Added public `/check` and `POST /api/public/check` with brand/question validation, honeypot and minimum-render-time protection, per-IP hourly and global daily limits, hashed 24-hour result caching, and three sequential samples from one real provider or one simulated provider. Results include mention and position variability, sentiment with sample size, citations, other names, and expandable escaped answers; landing links now point to `/check`.
+- Verified: `npm run verify` passed (typecheck, lint, 128 tests, production build). Offline tests prove the sixth hourly request is rejected, cached repeats make no additional provider calls, and the public API returns 429 at the limit.
+- Decisions/deviations: Reused existing `public_check_cache` and `public_check_log` tables; no schema or dependency changes. Only hashed input is used for cache lookup; request logs retain IP and time for abuse limits.
+- Learnings: The request timestamp is captured after client mount to meet Next.js 16 prerender restrictions while supporting the minimum-time check.
+- Next: T031
