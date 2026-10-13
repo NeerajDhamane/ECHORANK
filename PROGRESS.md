@@ -207,3 +207,9 @@ Format per entry:
 - Decisions/deviations: Used the equivalent closed-form chi-square survival probability for df=2 instead of adding `jstat`; source drafts are marked unreviewed and must pass human review before any live trial.
 - Learnings: Deriving each trial's shuffle from the preregistered seed and trial ID lets interrupted runs resume without changing earlier source positions.
 - Next: T033
+## 2026-10-14  T033  Research page  [done]
+- Changed: Added `/research` to read and validate `research/results.json`, per-model Recharts citation bars with Wilson 95% error bars, rate/CI tables with denominators, the published comparison table, study limitations, and a missing/empty-results state.
+- Verified: `npm run verify` passed with `VITEST_MAX_THREADS=1`: typecheck, lint, 140 tests across 46 files, and production build. Page tests render the sample fixture analysis and assert the missing-results empty state. Build completed without filesystem tracing warnings.
+- Decisions/deviations: Published sample sizes are labeled as not stated in the project specification instead of being inferred. Invalid result JSON is handled like unavailable results.
+- Learnings: Restricting the server-side results reader to a fixed project path keeps Next.js output tracing scoped.
+- Next: T034

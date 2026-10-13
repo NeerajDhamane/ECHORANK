@@ -118,7 +118,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T032 Experiment 1 tooling (R1)** — Dep: T010, T022 · Ref: Aşkın & Baykara (2026) design (small-scale replication)
   Do: `scripts/experiment1/make-versions.ts` (generates plain/faq/stats versions per topic with a provider; or loads hand-written versions), manipulation check via `extractFeatures`, `run.ts` (shuffles source order every repetition, parses `[Source N]` citations, throttled, resumable, writes `research/trials.csv` with model/date/seed), `analyze.ts` (per-version rate + Wilson 95% CI, chi-square goodness-of-fit, position-effect table, per-model, writes `research/results.json` + `research/report.md`; use `jstat` or an equivalent tiny dependency — justify in PROGRESS). Include `fixtures/experiment-sample.csv` for tests.
   Verify (tests): `wilson(50,100)` ≈ 0.404–0.596; analysis of the sample CSV matches hand-computed rates. **Live runs are human task H5.**
-- [ ] **T033 Research page (R1)** — Dep: T032
+- [x] **T033 Research page (R1)** — Dep: T032
   Do: `/research` page reading `research/results.json`: bar chart (rate ± CI per version per model), table versus the published numbers (FAQ 83.4%, plain 81.1%, statistics-dense 59.3% — GPT-4o, in-context), limitations text; handles missing results gracefully.
   Verify: renders with the sample results; empty state if file absent.
 
