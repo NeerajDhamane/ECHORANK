@@ -81,3 +81,9 @@ Format per entry:
 - Decisions/deviations: Persisted provider failure details as a generic error to avoid leaking provider response bodies or credentials. Tracking responses and UI label simulated rows/runs explicitly.
 - Learnings: A provider error row counts as a completed prompt/provider pair so run progress reaches its expected total even when a platform is unavailable.
 - Next: T012
+## 2026-10-14  T012  Seed/demo data   [done]
+- Changed: Added an idempotent seed for the demo login, Acme Cloud, four competitors, three topics, ten prompts, six historical runs, and 180 simulated answers. `--reset` soft-deletes the active demo brand/prompts while preserving historical chats; answers use the production mention, sentiment, and citation functions.
+- Verified: `npm run verify` passed (typecheck, lint, 34 tests, production build); ran `npm run seed` twice with the same 10 prompts, 6 runs, and 180 answers. Seed tests confirm six dated trend points with nondecreasing own-brand mentions, all rows simulated, rerun idempotence, and reset history retention.
+- Decisions/deviations: The Overview API is scheduled for T015 and does not exist yet; the six-point trend acceptance was verified against seeded run/chat data directly, and the HTTP overview check can be made once that endpoint exists.
+- Learnings: Soft-deleting seed entities supports a reset path without violating the append-only chat history rule.
+- Next: T013
