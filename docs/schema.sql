@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS prompts (
   text TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'active',   -- active | suggested | inactive
   locale TEXT DEFAULT 'global',            -- Module 25
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TEXT                         -- Soft deletion preserves chat history
 );
 
 CREATE TABLE IF NOT EXISTS tags (

@@ -56,6 +56,7 @@ export const prompts = sqliteTable(
     status: text("status").notNull().default("active"),
     locale: text("locale").default("global"),
     createdAt: createdAt(),
+    deletedAt: text("deleted_at"),
   },
   (table) => [index("idx_prompts_brand").on(table.brandId)],
 );

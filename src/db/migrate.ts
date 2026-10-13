@@ -18,6 +18,11 @@ export function migrateDatabase(
     if (!brandColumns.some((column) => column.name === "deleted_at")) {
       database.exec("ALTER TABLE brands ADD COLUMN deleted_at TEXT");
     }
+    // Migration 002: retain prompt rows referenced by append-only chats when users remove prompts.
+    const promptColumns = database.pragma("table_info(prompts)") as Array<{ name: string }>;
+    if (!promptColumns.some((column) => column.name === "deleted_at")) {
+      database.exec("ALTER TABLE prompts ADD COLUMN deleted_at TEXT");
+    }
   })();
 }
 

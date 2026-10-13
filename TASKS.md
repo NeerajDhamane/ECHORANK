@@ -22,9 +22,9 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T005 Brands & competitors (M2)** — Dep: T003, T004 · Ref: ARCHITECTURE §6, PRD §6 stories 1,9
   Do: `lib/brand-access.ts` (`getOwnedBrand`, `getCompetitors`); routes for brands/competitors; `/dashboard` brand grid + create form; Settings page with brand details, aliases, competitors list/add/remove. Brand and competitor deletion is soft deletion (`deleted_at`) so historical chats stay append-only.
   Verify: user A cannot read/delete user B's brand (404); soft-deleted brands are inaccessible and omitted from lists, all brand references still resolve to retained tombstones (test counts every table); aliases stored as JSON array.
-- [ ] **T006 Prompts, topics, suggestions (M3)** — Dep: T005 · Ref: PRD §5 M3, DESIGN Prompts
+- [x] **T006 Prompts, topics, suggestions (M3)** — Dep: T005 · Ref: PRD §5 M3, DESIGN Prompts
   Do: routes (list/create/patch/delete, topics, `?suggest=1`); `lib/prompt-suggestions.ts` (template tiers per intent; fills `{industry}`, `{year}`, `{brand}`, `{competitor}`); Prompts page with tabs Active/Suggested/Inactive, topic groups, add/edit/status toggle, one-click add of suggestions.
-  Verify: suggestions never duplicate existing prompts (test); a prompt with no runs shows "—" not "0%".
+  Verify: suggestions never duplicate existing prompts (test); a prompt with no runs shows "—" not "0%". Prompt removal soft-deletes rows so historical chats keep their prompt reference.
 
 ## Phase 1 — Core loop (M4–M7)
 - [ ] **T007 Mention detection (M5a)** — Dep: T002 · Ref: PRD §7

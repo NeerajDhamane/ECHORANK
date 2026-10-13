@@ -45,3 +45,9 @@ Format per entry:
 - Decisions/deviations: Applied the user's soft-delete decision to resolve the conflict with the append-only chat rule; the architecture and task verification now describe retained tombstones instead of hard cascades.
 - Learnings: Keeping tombstone brand rows provides a stable target for historical foreign references even though the current schema does not declare foreign keys.
 - Next: T006
+## 2026-10-14  T006  Prompts, topics, suggestions   [done]
+- Changed: Added brand-scoped prompt/topic APIs, access helpers and validation, intent/tier-based prompt suggestions, and the Active/Suggested/Inactive prompt manager with topic grouping, prompt editing/status changes, topic creation, and one-click suggestion adds. Prompt removal uses a `deleted_at` tombstone so append-only chats retain valid prompt references.
+- Verified: `npm run verify` passed (typecheck, lint, 11 tests, production build). Tests confirm filled templates do not duplicate existing prompts, ownership/topic validation, topic uniqueness, status changes, soft-delete reference retention, and migration 002.
+- Decisions/deviations: Prompt visibility, rank, and sentiment display “—” until tracking runs exist; no run metrics are invented. Extended migration 002 for `prompts.deleted_at`.
+- Learnings: Keeping prompt tombstones alongside brand tombstones preserves the context needed to interpret historical chat rows.
+- Next: T007
