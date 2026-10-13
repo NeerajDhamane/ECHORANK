@@ -36,7 +36,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T009 Citations (M7)** — Dep: T002
   Do: `lib/analysis/citations.ts` (`extractCitations`, `classifyDomain`, `persistSources`); dedupe URL vs bare domain; types review/forum/social/news/reference/docs/own/other.
   Verify (tests): URL + bare mention of same domain counts once; `reddit.com`→forum; `docs.stripe.com`→docs; re-persisting creates no duplicate `sources`.
-- [ ] **T010 Providers (M4)** — Dep: T002 · Ref: ARCHITECTURE §5, AGENTS hard rules (cost)
+- [x] **T010 Providers (M4)** — Dep: T002 · Ref: ARCHITECTURE §5, AGENTS hard rules (cost)
   Do: `lib/providers/{types,mock,groq,gemini,registry,throttle}.ts`, `lib/config.ts` (model names). Mock: seeded by prompt+name+date, sometimes omits the brand, templates mention domains. Registry: real providers only when env keys exist; always adds clearly-labelled simulated platforms. `withRetry` (429/503, exponential backoff) and `sleep`.
   Verify (tests, no network): registry with no env → only mocks with `isMock=true`; `withRetry` retries then succeeds (fake timers) and rethrows non-retryable errors; mock is deterministic for same inputs/day.
 - [ ] **T011 Tracking orchestrator + run UI (M5b)** — Dep: T006–T010 · Ref: ARCHITECTURE §4

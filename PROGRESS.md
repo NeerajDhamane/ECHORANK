@@ -69,3 +69,9 @@ Format per entry:
 - Decisions/deviations: `sources` stores normalized domains as its unique key; extracted URLs are retained in the in-memory citation result while the current schema stores only domain-level source rows.
 - Learnings: Storing chat-source associations with a composite key makes reprocessing idempotent while keeping citation records linked by domain.
 - Next: T010
+## 2026-10-14  T010  Providers   [done]
+- Changed: Added the stable provider interface, deterministic simulated platforms, optional Groq and Gemini REST adapters, environment-key registry, request throttling, sleep, and retry with exponential backoff for 429/503.
+- Verified: `npm run verify` passed (typecheck, lint, 29 tests, production build). Offline tests cover no-key registry behavior, optional real-provider registration, deterministic and occasionally brand-omitting mocks, transient retry success, and non-retryable errors.
+- Decisions/deviations: Provider model defaults are configurable through `GROQ_MODEL` and `GEMINI_MODEL`; defaults checked against current official model catalogs. Provider adapters return errors to the orchestration layer, which owns throttling and retry sequencing.
+- Learnings: Per-provider throttling must serialize concurrent waiters to preserve the minimum interval between real calls.
+- Next: T011
