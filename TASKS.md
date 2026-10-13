@@ -110,7 +110,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T030 Public checker (M24)** — Dep: T010, T007–T009
   Do: `/check` page + `POST /api/public/check`: per-IP limit (5/hour via `public_check_log`), global daily cap (200), input limits, 24h cache (`public_check_cache`), honeypot field + min-time check, 3 samples from **one** provider, shows sample size and variability; if no keys → loud "demo mode: simulated".
   Verify (tests): 6th request/hour from one IP → 429; cached repeat makes zero provider calls.
-- [ ] **T031 API keys, REST v1, MCP (M26)** — Dep: T014, T018, T019
+- [x] **T031 API keys, REST v1, MCP (M26)** — Dep: T014, T018, T019
   Do: key creation (`er_` + random; SHA-256 stored; shown once), revoke, `requireApiKeyOrSession`, `/api/v1/*` (brands, overview, prompts, track, runs, chats, sources, gaps, recommendations), `/api/mcp` with `@modelcontextprotocol/sdk` (Streamable HTTP; **verify the SDK's current API in its docs** before coding): tools `list_brands`, `get_overview`, `add_prompt`, `run_tracking`, `get_gap_opportunities`, `get_recommendations`; each tool re-checks ownership; per-key daily cap on `run_tracking`; no delete tools; developer page with connect snippets (verify client syntax in current docs).
   Verify (tests): revoked key → 401; key A can't read user B's brand through any tool; plaintext key never retrievable.
 

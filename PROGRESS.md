@@ -195,3 +195,9 @@ Format per entry:
 - Decisions/deviations: Reused existing `public_check_cache` and `public_check_log` tables; no schema or dependency changes. Only hashed input is used for cache lookup; request logs retain IP and time for abuse limits.
 - Learnings: The request timestamp is captured after client mount to meet Next.js 16 prerender restrictions while supporting the minimum-time check.
 - Next: T031
+## 2026-10-14  T031  API keys, REST v1, MCP   [done]
+- Changed: Added one-time `er_` API keys stored as SHA-256 hashes, key list/revoke endpoints and a Developer page; bearer-or-session auth for REST v1 routes, five-run-per-key UTC daily accounting, ownership-checked MCP tools over Streamable HTTP, and `API.md` endpoint/client documentation.
+- Verified: `npm run verify` passed (typecheck, lint, 132 tests, production build). Tests cover key hash-only persistence, revoked-key rejection, daily caps and reset, and ownership checks on every brand-scoped MCP tool.
+- Decisions/deviations: Updated the task's legacy `@modelcontextprotocol/sdk` package reference to the current official `@modelcontextprotocol/server` v2.3.1 API after verifying current SDK and Claude Code/Cursor connection docs. Added schema migration 004 for daily API-key usage counts.
+- Learnings: Building the MCP server per request lets its tool handlers close over only the authenticated user's ID and key ID.
+- Next: T032

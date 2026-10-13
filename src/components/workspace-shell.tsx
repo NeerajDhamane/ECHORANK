@@ -2,12 +2,12 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Activity, Bell, BookOpen, ChevronDown, FileText, Gauge, Globe2, Layers, Lightbulb, Menu, MessageSquare, Network, Search, Settings, Shield, Sparkles, Tag, X } from "lucide-react";
+import { Activity, Bell, BookOpen, ChevronDown, FileText, Gauge, Globe2, Layers, Lightbulb, Menu, MessageSquare, Network, Search, Settings, Shield, Sparkles, Tag, X, Code2 } from "lucide-react";
 
 const sections = [
   { label: "WORKSPACE", items: [["Overview", "", Gauge], ["Prompts", "prompts", Search], ["Chats", "chats", MessageSquare], ["Sources", "sources", BookOpen], ["Ranking", "ranking", Activity], ["Gaps", "gaps", Network], ["Recommendations", "recommendations", Lightbulb], ["Discovery", "discovery", Sparkles]] },
   { label: "TOOLS", items: [["Content score", "tools/content-score", Layers], ["Crawl audit", "tools/crawl-audit", Shield], ["Briefs", "tools/briefs", FileText], ["llms.txt", "tools/llms-txt", Globe2]] },
-  { label: "MANAGE", items: [["Report", "report", FileText], ["Alerts", "alerts", Bell], ["Settings", "settings", Settings]] },
+  { label: "MANAGE", items: [["Report", "report", FileText], ["Alerts", "alerts", Bell], ["Developer", "developer", Code2], ["Settings", "settings", Settings]] },
 ] as const;
 
 function SidebarNav({ brandId, close }: { brandId: string; close?: () => void }) {

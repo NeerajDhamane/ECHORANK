@@ -277,6 +277,16 @@ export const apiKeys = sqliteTable(
   },
 );
 
+export const apiKeyUsage = sqliteTable(
+  "api_key_usage",
+  {
+    apiKeyId: text("api_key_id").notNull().references(() => apiKeys.id, { onDelete: "cascade" }),
+    usageDate: text("usage_date").notNull(),
+    trackRuns: integer("track_runs").notNull().default(0),
+  },
+  (table) => [primaryKey({ columns: [table.apiKeyId, table.usageDate] })],
+);
+
 export const schema = {
   users,
   brands,
@@ -299,4 +309,5 @@ export const schema = {
   publicCheckCache,
   publicCheckLog,
   apiKeys,
+    apiKeyUsage,
 };

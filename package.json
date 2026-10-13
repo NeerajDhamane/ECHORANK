@@ -20,6 +20,7 @@
     "@fontsource/inter": "^5.2.6",
     "@fontsource/jetbrains-mono": "^5.2.6",
     "@fontsource/space-grotesk": "^5.2.6",
+    "@modelcontextprotocol/server": "^2.3.1",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^12.4.1",
     "clsx": "^2.1.1",

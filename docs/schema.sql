@@ -199,6 +199,14 @@ CREATE TABLE IF NOT EXISTS api_keys (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Migration 004: per-key daily limits for expensive programmatic tracking runs.
+CREATE TABLE IF NOT EXISTS api_key_usage (
+  api_key_id TEXT NOT NULL REFERENCES api_keys(id) ON DELETE CASCADE,
+  usage_date TEXT NOT NULL,
+  track_runs INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (api_key_id, usage_date)
+);
+
 CREATE INDEX IF NOT EXISTS idx_brands_user ON brands(user_id);
 CREATE INDEX IF NOT EXISTS idx_brands_owner ON brands(owner_brand_id);
 CREATE INDEX IF NOT EXISTS idx_prompts_brand ON prompts(brand_id);
