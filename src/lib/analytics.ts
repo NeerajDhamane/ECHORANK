@@ -12,6 +12,12 @@ export type Scope = {
   tagId?: string;
   locale?: string;
   includeSimulated?: boolean;
+  mentioned?: boolean;
+  sentiment?: string;
+  runId?: string;
+  brandFoundId?: string;
+  source?: string;
+  search?: string;
 };
 
 type QueryParams = Record<string, string | number>;
@@ -61,6 +67,21 @@ export function whereClause(scope: Scope): { sql: string; params: QueryParams } 
     params.tagId = scope.tagId;
   }
   if (scope.locale !== undefined) { predicates.push("c.locale = @locale"); params.locale = scope.locale; }
+  if (scope.mentioned !== undefined) { predicates.push("c.mentioned = @mentioned"); params.mentioned = scope.mentioned ? 1 : 0; }
+  if (scope.sentiment !== undefined) { predicates.push("c.sentiment = @sentiment"); params.sentiment = scope.sentiment; }
+  if (scope.runId !== undefined) { predicates.push("c.run_id = @runId"); params.runId = scope.runId; }
+  if (scope.brandFoundId !== undefined) {
+    predicates.push("EXISTS (SELECT 1 FROM json_each(c.brands_found) AS found_brand WHERE json_extract(found_brand.value, '$.brandId') = @brandFoundId)");
+    params.brandFoundId = scope.brandFoundId;
+  }
+  if (scope.source !== undefined) {
+    predicates.push("EXISTS (SELECT 1 FROM chat_sources AS filter_cs JOIN sources AS filter_s ON filter_s.id = filter_cs.source_id WHERE filter_cs.chat_id = c.id AND filter_s.domain = @source)");
+    params.source = scope.source;
+  }
+  if (scope.search !== undefined) {
+    predicates.push("EXISTS (SELECT 1 FROM prompts AS filter_prompt WHERE filter_prompt.id = c.prompt_id AND filter_prompt.text LIKE @search)");
+    params.search = `%${scope.search}%`;
+  }
   return { sql: `WHERE ${predicates.join(" AND ")}`, params };
 }
 

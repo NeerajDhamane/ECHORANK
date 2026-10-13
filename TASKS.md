@@ -56,7 +56,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T015 Overview (M9–M11)** — Dep: T014, T004 · Ref: DESIGN Overview
   Do: `GET /api/brands/:id/overview` + page: stat cards, trend (per-brand lines, own = amber, moving-average toggle, tooltip with n), sentiment donut, platform bars, share-of-voice bars with "vs you" delta, top sources, recent chats; wire top-bar filters to URL params and Scope; chart elements link to filtered Chats.
   Verify: numbers equal hand count of the Chats list for the same filter; empty states for no brand/prompts/runs; honesty banner when simulated included.
-- [ ] **T016 Chats log (M12)** — Dep: T015
+- [x] **T016 Chats log (M12)** — Dep: T015
   Do: list + detail APIs, page with grouped list, per-run/platform timeline, `Highlighted` component (own amber / rivals muted, escaped text), filters, pagination (50), simulated badge.
   Verify: highlight test (component or pure function); filters work; raw HTML in an answer renders as text.
 - [ ] **T017 Sources (M13)** — Dep: T015

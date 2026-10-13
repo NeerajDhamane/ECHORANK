@@ -105,3 +105,9 @@ Format per entry:
 - Decisions/deviations: Filter selectors derive available platform/locale/tag values from the owned brand's existing rows; tag editing remains in T021. Moving-average toggle is local chart state, while analytic filters are URL-backed.
 - Learnings: Keeping filter values in the URL lets the server page and API resolve the same date and sample scope and preserves filters when navigating to Chats.
 - Next: T016
+## 2026-10-14  T016  Chats log   [done]
+- Changed: Added ownership-checked list/detail Chats APIs and a server-rendered Chats page with URL-backed filters, prompt search, 50-row pagination, topic-grouped prompt list, per-prompt run/platform timeline, answer highlights, citations, sentiment, and simulated badges. Raw answers render as React text; own-brand matches are amber and competitor matches muted.
+- Verified: `npm run verify` passed (typecheck, lint, 47 tests, production build). New tests exercise prompt/date/platform/mention/sentiment filters, paging, details/citations, invalid custom ranges, boundary-aware brand matching, and preservation of HTML-looking answer text as literal segments.
+- Decisions/deviations: The prompt timeline reflects the current 50-answer result page; filters and pagination are shareable URL parameters. Search matches prompt text and detail reads are constrained to the same owned-brand scope.
+- Learnings: React text nodes preserve untrusted answer markup literally while allowing brand matches to be styled without HTML injection.
+- Next: T017
