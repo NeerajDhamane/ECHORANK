@@ -33,11 +33,11 @@ describe("analytics scope and metrics", () => {
     ]).run();
     const found = (ids: Array<[string, string]>) => JSON.stringify(ids.map(([brandId, name], index) => ({ brandId, name, position: index + 1 })));
     const rows = [
-      { id: "c1", runId: "r1", promptId: "p1", brandId: "own", platform: "A", createdAt: "2026-10-14 08:00:00", isSimulated: 0, mentioned: 1, position: 1, sentiment: "positive", sentimentScore: 0.5, brandsFound: found([["own", "Own Brand"], ["rival", "Rival"]]) },
-      { id: "c2", runId: "r1", promptId: "p2", brandId: "own", platform: "B", createdAt: "2026-10-14 23:59:59", isSimulated: 0, mentioned: 0, brandsFound: found([["rival", "Rival"]]) },
-      { id: "c3", runId: "r1", promptId: "p1", brandId: "own", platform: "A", createdAt: "2026-10-14 12:00:00", isSimulated: 1, mentioned: 1, position: 2, sentiment: "negative", sentimentScore: -0.5, brandsFound: found([["own", "Own Brand"], ["rival", "Rival"]]) },
-      { id: "c4", runId: "r1", promptId: "p1", brandId: "own", platform: "A", createdAt: "2026-10-14 13:00:00", isSimulated: 0, mentioned: 1, sentiment: "positive", sentimentScore: 1, error: "Provider request failed.", brandsFound: found([["own", "Own Brand"]]) },
-      { id: "c5", runId: "r2", promptId: "p1", brandId: "own", platform: "A", createdAt: "2026-10-15 00:00:00", isSimulated: 0, mentioned: 0, brandsFound: "[]" },
+      { id: "c1", runId: "r1", promptId: "p1", brandId: "own", platform: "A", locale: "en-US", createdAt: "2026-10-14 08:00:00", isSimulated: 0, mentioned: 1, position: 1, sentiment: "positive", sentimentScore: 0.5, brandsFound: found([["own", "Own Brand"], ["rival", "Rival"]]) },
+      { id: "c2", runId: "r1", promptId: "p2", brandId: "own", platform: "B", locale: "global", createdAt: "2026-10-14 23:59:59", isSimulated: 0, mentioned: 0, brandsFound: found([["rival", "Rival"]]) },
+      { id: "c3", runId: "r1", promptId: "p1", brandId: "own", platform: "A", locale: "en-US", createdAt: "2026-10-14 12:00:00", isSimulated: 1, mentioned: 1, position: 2, sentiment: "negative", sentimentScore: -0.5, brandsFound: found([["own", "Own Brand"], ["rival", "Rival"]]) },
+      { id: "c4", runId: "r1", promptId: "p1", brandId: "own", platform: "A", locale: "en-US", createdAt: "2026-10-14 13:00:00", isSimulated: 0, mentioned: 1, sentiment: "positive", sentimentScore: 1, error: "Provider request failed.", brandsFound: found([["own", "Own Brand"]]) },
+      { id: "c5", runId: "r2", promptId: "p1", brandId: "own", platform: "A", locale: "en-US", createdAt: "2026-10-15 00:00:00", isSimulated: 0, mentioned: 0, brandsFound: "[]" },
     ];
     database.insert(chats).values(rows).run();
     database.insert(sources).values([
@@ -105,5 +105,18 @@ describe("analytics scope and metrics", () => {
     expect(shareOfVoice({ brandId: "own", tagId: "tag-1" }, db)[0]?.sampleSize).toBe(2);
     const allRuns = visibilityByRun({ brandId: "own", includeSimulated: true }, db);
     expect(allRuns.map(({ runId, sampleSize }) => [runId, sampleSize])).toEqual([["r1", 3], ["r2", 1]]);
+  });
+
+  it("applies one locale scope consistently across overview chart data", () => {
+    const db = setup();
+    const scope = { brandId: "own", locale: "en-US" };
+    const overview = getOverview(scope, db);
+    expect(overview.stats.answers).toBe(2);
+    expect(overview.trend.map((run) => run.sampleSize)).toEqual([1, 1]);
+    expect(overview.platforms.map((item) => item.platform)).toEqual(["A"]);
+    expect(overview.shareOfVoice[0]?.sampleSize).toBe(2);
+    expect(overview.sentiment.n).toBe(1);
+    expect(overview.sources.map((source) => [source.domain, source.usedPercent])).toEqual([["docs.example", 50]]);
+    expect(overview.recentChats.map((chat) => chat.id)).toEqual(["c5", "c1"]);
   });
 });

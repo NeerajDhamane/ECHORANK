@@ -1,5 +1,6 @@
 import { providerConfig } from "@/lib/config";
 import { ProviderHttpError, type AIProvider } from "./types";
+import { addLocaleHint } from "@/lib/locales";
 
 type GroqResponse = { choices?: Array<{ message?: { content?: string | null } }> };
 
@@ -14,7 +15,7 @@ export function createGroqProvider(apiKey: string, model = providerConfig.groq.m
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           model,
-          messages: [{ role: "user", content: `${opts.locale ? `Locale hint: ${opts.locale}\n` : ""}${prompt}` }],
+          messages: [{ role: "user", content: addLocaleHint(prompt, opts.locale) }],
         }),
         signal: AbortSignal.timeout(30_000),
       });

@@ -183,3 +183,9 @@ Format per entry:
 - Decisions/deviations: Alert analytics exclude simulated and failed answers; negative sentiment needs at least 10 analyzed brand mentions. Added node-cron (required by M22) with no other dependency changes. Node 24.20.0 remained in use after approval; existing better-sqlite3 and full verification passed.
 - Learnings: Storing the source run on each alert allows database-level deduplication while preserving subsequent alerts from later runs.
 - Next: T029
+## 2026-10-14  T029  Locale tracking   [done]
+- Changed: Added a per-prompt picker for Global and all 249 ISO-3166 alpha-2 countries, readable locale filter choices, and an explicit locale-hinted (approximate) label in the workspace and report. Groq/Gemini requests now receive a plain-language country nudge; chat rows continue to store the prompt locale as an immutable run-time snapshot.
+- Verified: npm run verify passed (typecheck, lint, 125 tests, production build). New tests prove changing a prompt leaves chat history unchanged, locale scope consistently filters Overview trend/platform/sentiment/share/sources/recent answers, and country names appear in real-provider request payloads.
+- Decisions/deviations: Existing prompt/chat locale columns, patch API, shared analytics Scope, and global filter already supported locale; no schema or dependency changes were needed. Legacy BCP-47 prompt values remain selectable and map to their country for provider hints.
+- Learnings: Saving locale on each chat row is what lets a later prompt edit preserve the meaning of historical analytics.
+- Next: T030

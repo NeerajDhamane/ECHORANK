@@ -1,5 +1,6 @@
 import { providerConfig } from "@/lib/config";
 import { ProviderHttpError, type AIProvider } from "./types";
+import { addLocaleHint } from "@/lib/locales";
 
 type GeminiResponse = { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
 
@@ -14,7 +15,7 @@ export function createGeminiProvider(apiKey: string, model = providerConfig.gemi
         method: "POST",
         headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: `${opts.locale ? `Locale hint: ${opts.locale}\n` : ""}${prompt}` }] }],
+          contents: [{ parts: [{ text: addLocaleHint(prompt, opts.locale) }] }],
         }),
         signal: AbortSignal.timeout(30_000),
       });

@@ -104,7 +104,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
   Verify (tests): synthetic 10-point drop → exactly one alert, re-evaluating adds none; below-min-sample → none; cron endpoint 401 without secret.
 
 ## Phase 6 — Extended surface (M25, M24, M26)
-- [ ] **T029 Locale tracking (M25)** — Dep: T011
+- [x] **T029 Locale tracking (M25)** — Dep: T011
   Do: locale picker per prompt, locale hint in provider call, `chats.locale` stored at run time, locale filter in `Scope`, UI label "locale-hinted (approximate)".
   Verify: editing a prompt's locale never rewrites old chats (test); filter changes all views.
 - [ ] **T030 Public checker (M24)** — Dep: T010, T007–T009

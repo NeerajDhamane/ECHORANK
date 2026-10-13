@@ -34,4 +34,16 @@ describe("prompt access", () => {
     expect(connection.prepare("SELECT prompt_id FROM chats WHERE id = 'chat-1'").get()).toEqual({ prompt_id: prompt!.id });
     expect(connection.prepare("SELECT deleted_at FROM prompts WHERE id = @id").get({ id: prompt!.id })).toMatchObject({ deleted_at: expect.any(String) });
   });
+
+  it("changes a prompt locale without rewriting the locale saved on historical chats", () => {
+    connection = new Database(":memory:"); migrateDatabase(connection);
+    const database = drizzle(connection, { schema });
+    const brand = createBrand("user-locale", { name: "Locale Brand", aliases: [], website: null, industry: null }, database);
+    const prompt = createPrompt(brand.id, { text: "Which options are available?", topicId: null, status: "active", locale: "global" }, database)!;
+    connection.prepare("INSERT INTO tracking_runs (id, brand_id) VALUES ('locale-run', @brandId)").run({ brandId: brand.id });
+    connection.prepare("INSERT INTO chats (id, run_id, prompt_id, brand_id, platform, locale) VALUES ('locale-chat', 'locale-run', @promptId, @brandId, 'Test', 'global')").run({ brandId: brand.id, promptId: prompt.id });
+
+    expect(updatePrompt(brand.id, prompt.id, { locale: "IN" }, database)?.locale).toBe("IN");
+    expect(connection.prepare("SELECT locale FROM chats WHERE id = 'locale-chat'").get()).toEqual({ locale: "global" });
+  });
 });

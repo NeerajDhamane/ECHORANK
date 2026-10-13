@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { getProviders } from "@/lib/providers/registry";
 import { createMockProvider } from "@/lib/providers/mock";
+import { createGroqProvider } from "@/lib/providers/groq";
+import { createGeminiProvider } from "@/lib/providers/gemini";
 import { ProviderHttpError } from "@/lib/providers/types";
 import { withRetry } from "@/lib/providers/throttle";
 
@@ -42,5 +44,21 @@ describe("provider layer", () => {
     const operation = vi.fn<() => Promise<string>>().mockRejectedValue(new ProviderHttpError("bad request", 400));
     await expect(withRetry(operation, { sleepFn: async () => undefined })).rejects.toThrow("bad request");
     expect(operation).toHaveBeenCalledTimes(1);
+  });
+
+  it("sends a plain-language approximate country hint to real chat providers", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({ choices: [{ message: { content: "answer" } }] }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: "answer" }] } }] }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      await createGroqProvider("test").run("Recommend a service.", { locale: "IN" });
+      await createGeminiProvider("test").run("Recommend a service.", { locale: "IN" });
+      const groqBody = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body)) as { messages: Array<{ content: string }> };
+      const geminiBody = JSON.parse(String(fetchMock.mock.calls[1]?.[1]?.body)) as { contents: Array<{ parts: Array<{ text: string }> }> };
+      expect(groqBody.messages[0]?.content).toContain("The user is located in India.");
+      expect(geminiBody.contents[0]?.parts[0]?.text).toContain("Answer for that market");
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
