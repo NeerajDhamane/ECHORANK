@@ -129,3 +129,9 @@ Format per entry:
 - Decisions/deviations: Gaps use only successful answers and active prompts/competitors. No search-volume weights are inferred; percentages show exact counts and sample size.
 - Learnings: Deduplicating each competitor to one hit per answer keeps mention rates bounded by the prompt sample size.
 - Next: T020
+## 2026-10-14  T020  Ranking   [done]
+- Changed: Added ranking metrics for active own/rival brands, an owner-checked API and scoped comparison page, equal-duration previous-window visibility deltas, per-brand sentiment and average rank, sample counts, and spreadsheet-safe CSV export.
+- Verified: `npm run verify` passed (typecheck, lint, 63 tests, production build). Synthetic SQLite tests check the selected and immediately preceding equal windows, visibility deltas, per-brand sentiment/rank, missing history as n/a, and the You-first visibility ordering; CSV tests cover `=cmd`, `+`, `-`, `@`, separators, and line breaks.
+- Decisions/deviations: Sentiment is displayed on a 0–100 scale from recorded numeric scores (mapped from -1..1), with sentiment labels as fallback. Optional radar chart omitted.
+- Learnings: Period change is measured in percentage points, and is n/a only when the prior window contains no successful answers.
+- Next: T021

@@ -71,7 +71,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T019 Gap opportunities (M15)** — Dep: T017
   Do: `lib/gaps.ts` (`rivalRate × (1 − yourRate)`, dominant rival), API, page with min-sample guard (n<3 greyed), buttons linking to brief generator and discovery (disabled until those tasks exist).
   Verify: prompt where you're 100% visible never appears; sorted by opportunity.
-- [ ] **T020 Ranking (M19)** — Dep: T015
+- [x] **T020 Ranking (M19)** — Dep: T015
   Do: ranking API + page: visibility, Δ vs equal-length previous window ("n/a" if none), per-brand sentiment (from `brands_found`), avg rank, mentions; CSV export (`lib/csv.ts`, formula-injection safe).
   Verify: Δ uses equal windows (test); CSV escapes `=cmd`.
 - [ ] **T021 Tags (M20)** — Dep: T006, T014
