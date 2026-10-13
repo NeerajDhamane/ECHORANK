@@ -45,7 +45,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T012 Seed/demo data** — Dep: T011
   Do: `scripts/seed.ts` (`--reset` supported, idempotent): demo user `demo@echorank.local` / `demo1234`, brand "Acme Cloud" (industry "cloud hosting"), 4 competitors, 10 prompts in 3 topics, 6 runs over the last 14 days with an upward trend — produced **through the real analysis functions**, every row `is_simulated=1`. Print credentials at the end.
   Verify: after seeding, `GET overview?includeSimulated=true` returns ≥ 6 trend points; re-running seed doesn't duplicate.
-- [ ] **T013 Smoke test script** — Dep: T011
+- [x] **T013 Smoke test script** — Dep: T011
   Do: `scripts/smoke.ts`: signup → brand → 2 competitors → 3 prompts → run (mocks only) → poll until completed → assert chats exist and overview numbers are consistent.
   Verify: `npm run smoke` exits 0 on a clean DB.
 

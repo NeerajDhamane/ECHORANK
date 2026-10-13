@@ -87,3 +87,9 @@ Format per entry:
 - Decisions/deviations: The Overview API is scheduled for T015 and does not exist yet; the six-point trend acceptance was verified against seeded run/chat data directly, and the HTTP overview check can be made once that endpoint exists.
 - Learnings: Soft-deleting seed entities supports a reset path without violating the append-only chat history rule.
 - Next: T013
+## 2026-10-14  T013  Smoke test script   [done]
+- Changed: Added a self-starting HTTP smoke script using an isolated temporary SQLite database and blank provider keys; covers signup, brand creation, two competitors, three prompts, tracking, polling, and run history.
+- Verified: `npm run smoke` passed with all nine expected prompt/mock-provider answers completed and simulated. `npm run verify` passed (typecheck, lint, 34 tests, production build). Persisted answer and simulated counts match run status and history.
+- Decisions/deviations: The dedicated Overview API does not exist until T015, so the smoke script checks the current run overview totals against stored chats and run history; it does not create future endpoint scope. Next dev uses webpack in this script because the sandboxed Turbopack process panicked canonicalizing the Windows workspace; webpack passed once run with workspace filesystem access.
+- Learnings: A clean, isolated DB and disabled provider keys make the end-to-end flow repeatable without disturbing developer data or calling external providers.
+- Next: T014
