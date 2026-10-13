@@ -33,7 +33,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T008 Sentiment (M6)** — Dep: T002
   Do: `lib/analysis/sentiment.ts` `scoreSentiment(text, mentionIndex)` — window −160/+260 chars, positive/negative lexicons, negation flip ("not reliable"), score −1..1 → label thresholds ±0.15.
   Verify (tests): "Acme is not reliable" → negative; "Acme is a top, trusted choice" → positive; neutral text → neutral; no mention → caller stores null.
-- [ ] **T009 Citations (M7)** — Dep: T002
+- [x] **T009 Citations (M7)** — Dep: T002
   Do: `lib/analysis/citations.ts` (`extractCitations`, `classifyDomain`, `persistSources`); dedupe URL vs bare domain; types review/forum/social/news/reference/docs/own/other.
   Verify (tests): URL + bare mention of same domain counts once; `reddit.com`→forum; `docs.stripe.com`→docs; re-persisting creates no duplicate `sources`.
 - [ ] **T010 Providers (M4)** — Dep: T002 · Ref: ARCHITECTURE §5, AGENTS hard rules (cost)

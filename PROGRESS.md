@@ -63,3 +63,9 @@ Format per entry:
 - Decisions/deviations: none; callers can persist the returned null when no mention was detected.
 - Learnings: Short negation windows and clause breaks keep a nearby negator from flipping later contrast clauses.
 - Next: T009
+## 2026-10-14  T009  Citations   [done]
+- Changed: Added citation extraction with URL/domain normalization and deduplication, domain classification, and transactional idempotent source/chat-source persistence.
+- Verified: `npm run verify` passed (typecheck, lint, 24 tests, production build). Tests cover URL-plus-bare-domain dedupe, Reddit/forum and Stripe docs classification, own subdomains, and repeat persistence without duplicate rows.
+- Decisions/deviations: `sources` stores normalized domains as its unique key; extracted URLs are retained in the in-memory citation result while the current schema stores only domain-level source rows.
+- Learnings: Storing chat-source associations with a composite key makes reprocessing idempotent while keeping citation records linked by domain.
+- Next: T010
