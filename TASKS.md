@@ -79,7 +79,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
   Verify: tag filter changes Overview, Chats, Sources, Gaps consistently; deleting a tag keeps prompts.
 
 ## Phase 4 — Action tools (M8, M17, M18, M23)
-- [ ] **T022 Content score (M8)** — Dep: T005
+- [x] **T022 Content score (M8)** — Dep: T005
   Do: `lib/analysis/content-features.ts` (`extractFeatures`, `scoreContent`: 9 weighted checks with fixes — FAQ pairs≥3 (20), Flesch≥50 (20), avg sentence ≤22 (10), numericRatio ≤0.06 (10), headings≥3 (10), bullets≥3 (5), JSON-LD (15), words≥300 (5), passive ≤0.25 (5)); API + page (paste/URL, score ring, passed/failed lists, history with delta). URL mode uses `safeFetch` (from T023; until then paste-only).
   Verify (tests): FAQ-style fixture scores higher than a statistics-dense fixture; each failed check returns its `fix`.
 - [ ] **T023 Crawlability audit (M17)** — Dep: T005

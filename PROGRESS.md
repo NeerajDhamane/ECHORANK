@@ -141,3 +141,9 @@ Format per entry:
 - Decisions/deviations: Tags are managed per user and exposed through the authenticated brand workspace path so each endpoint can verify workspace ownership. A repeated case-insensitive create returns the existing tag.
 - Learnings: Since all analytic views share `whereClause`, the existing `Scope.tagId` predicate propagates consistently without per-view filter logic.
 - Next: T022
+## 2026-10-14  T022  Content score   [done]
+- Changed: Added deterministic content feature extraction and nine weighted checks, a brand-owned paste scoring API, saved score history with before/after point deltas, and a responsive scoring workspace listing passed checks and concrete fixes for every failed check.
+- Verified: `npm run verify` passed (typecheck, lint, 71 tests, production build). A readable FAQ fixture scores above statistics-dense content; every failure includes a fix; SQLite tests verify rescoring history/delta; route tests verify ownership and reject URL mode.
+- Decisions/deviations: T022 is paste-only until T023 provides the SSRF-safe fetcher; API rejects URL input rather than fetching unsafely. Scoring remains a transparent heuristic and does not claim to predict citations or rankings.
+- Learnings: Persisting score attempts gives a direct before/after signal while preserving the underlying content and feature snapshot for future history views.
+- Next: T023
