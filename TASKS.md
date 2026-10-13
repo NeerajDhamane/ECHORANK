@@ -53,7 +53,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T014 Analytics service** — Dep: T011 · Ref: PRD §7
   Do: `lib/analytics.ts`: `Scope`, `whereClause` (uses `toSqlTime`, `includeSimulated`, tag/locale/platform/prompt), `visibilityByRun`, `sentimentBreakdown`, `visibilityByPlatform`, `shareOfVoice`, `topSources` — prepared statements with named params.
   Verify (tests with synthetic chat rows): every metric equals hand-calculated values; simulated excluded by default; date filter correct across same-day boundaries.
-- [ ] **T015 Overview (M9–M11)** — Dep: T014, T004 · Ref: DESIGN Overview
+- [x] **T015 Overview (M9–M11)** — Dep: T014, T004 · Ref: DESIGN Overview
   Do: `GET /api/brands/:id/overview` + page: stat cards, trend (per-brand lines, own = amber, moving-average toggle, tooltip with n), sentiment donut, platform bars, share-of-voice bars with "vs you" delta, top sources, recent chats; wire top-bar filters to URL params and Scope; chart elements link to filtered Chats.
   Verify: numbers equal hand count of the Chats list for the same filter; empty states for no brand/prompts/runs; honesty banner when simulated included.
 - [ ] **T016 Chats log (M12)** — Dep: T015

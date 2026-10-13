@@ -185,3 +185,52 @@ export function topSources(scope: Scope, limit = 10, database: Database.Database
     LIMIT @limit
   `).all({ ...where.params, limit: safeLimit }) as Array<{ domain: string; type: string; answers: number; citations: number }>;
 }
+
+/** Dashboard payload composed only from the shared scoped analytics. */
+export function getOverview(scope: Scope, database: Database.Database = getSqlite()) {
+  const rows = scopedChats(scope, database);
+  const sampleSize = rows.length;
+  const ownMentions = rows.filter((row) => row.mentioned === 1);
+  const sentiment = sentimentBreakdown(scope, database);
+  const platforms = visibilityByPlatform(scope, database);
+  const sources = topSources(scope, 5, database).map((source) => ({
+    ...source,
+    usedPercent: sampleSize ? (source.answers / sampleSize) * 100 : 0,
+    averageCitations: source.answers ? source.citations / source.answers : 0,
+  }));
+  const share = shareOfVoice(scope, database);
+  const ownShare = share.find((item) => item.brandId === scope.brandId)?.share ?? 0;
+  const recentWhere = whereClause(scope);
+  const recentChats = database.prepare(`
+    SELECT c.id, c.created_at AS createdAt, c.prompt_id AS promptId,
+      p.text AS prompt, c.platform, c.mentioned, c.sentiment, c.is_simulated AS isSimulated
+    FROM chats AS c
+    JOIN prompts AS p ON p.id = c.prompt_id
+    ${recentWhere.sql}
+    ORDER BY c.created_at DESC, c.id DESC
+    LIMIT @recentLimit
+  `).all({ ...recentWhere.params, recentLimit: 5 }) as Array<{
+    id: string; createdAt: string; promptId: string; prompt: string; platform: string;
+    mentioned: number; sentiment: string | null; isSimulated: number;
+  }>;
+  const positionRows = ownMentions.filter((row) => row.position !== null);
+  const trend = visibilityByRun(scope, database);
+  return {
+    stats: {
+      visibility: sampleSize ? ownMentions.length / sampleSize * 100 : null,
+      visibilityN: sampleSize,
+      averageRank: positionRows.length ? positionRows.reduce((total, row) => total + (row.position ?? 0), 0) / positionRows.length : null,
+      rankN: positionRows.length,
+      positiveSentiment: sentiment.n ? sentiment.positive / sentiment.n * 100 : null,
+      sentimentN: sentiment.n,
+      answers: sampleSize,
+    },
+    trend,
+    sentiment,
+    platforms,
+    shareOfVoice: share.map((item) => ({ ...item, vsYou: item.share - ownShare })),
+    sources,
+    recentChats,
+    simulatedIncluded: scope.includeSimulated === true,
+  };
+}

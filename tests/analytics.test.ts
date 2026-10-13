@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/better-sqlite3";
 import { afterEach, describe, expect, it } from "vitest";
 import { migrateDatabase } from "@/db/migrate";
 import { brands, chats, chatSources, prompts, schema, sources, tags, promptTags, trackingRuns } from "@/db/schema";
-import { sentimentBreakdown, shareOfVoice, topSources, visibilityByPlatform, visibilityByRun, whereClause } from "@/lib/analytics";
+import { getOverview, sentimentBreakdown, shareOfVoice, topSources, visibilityByPlatform, visibilityByRun, whereClause } from "@/lib/analytics";
 
 describe("analytics scope and metrics", () => {
   let connection: Database.Database | undefined;
@@ -84,6 +84,18 @@ describe("analytics scope and metrics", () => {
       { domain: "docs.example", type: "docs", answers: 1, citations: 2 },
       { domain: "forum.example", type: "forum", answers: 1, citations: 1 },
     ]);
+    expect(getOverview(scope, db)).toMatchObject({
+      stats: { visibility: 50, visibilityN: 2, averageRank: 1, rankN: 1, positiveSentiment: 100, sentimentN: 1, answers: 2 },
+      sources: [
+        { domain: "docs.example", usedPercent: 50, averageCitations: 2 },
+        { domain: "forum.example", usedPercent: 50, averageCitations: 1 },
+      ],
+      recentChats: [
+        { id: "c2", promptId: "p2", platform: "B", mentioned: 0 },
+        { id: "c1", promptId: "p1", platform: "A", mentioned: 1 },
+      ],
+      simulatedIncluded: false,
+    });
   });
 
   it("excludes simulated answers by default, supports tag scope, and handles inclusive same-day dates", () => {

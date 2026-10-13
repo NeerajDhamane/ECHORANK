@@ -99,3 +99,9 @@ Format per entry:
 - Decisions/deviations: Date-only `dateTo` includes that entire UTC date; timestamp `dateTo` is inclusive to the supplied second. Metrics use successful answers (`error IS NULL`) per PRD §7.
 - Learnings: Keeping one scoped successful-answer query for the chat-based metrics makes denominator and filter behavior consistent across views.
 - Next: T015
+## 2026-10-14  T015  Overview   [done]
+- Changed: Added authenticated `GET /api/brands/:id/overview`, server-rendered Overview page and responsive stat/chart/source/recent-chat sections. Connected shareable date, platform, locale, tag, and simulated filters to `Scope`; added custom UTC dates, per-brand visibility trend with 7-run average, sentiment donut, platform and share-of-voice bars, top sources, and filtered Chats links.
+- Verified: `npm run verify` passed (typecheck, lint, 43 tests, production build). Synthetic hand-count assertions cover Overview KPIs and sources; route tests cover ownership 404 and query validation. Empty states distinguish no active prompts from no tracking data; simulated inclusion shows an honesty banner.
+- Decisions/deviations: Filter selectors derive available platform/locale/tag values from the owned brand's existing rows; tag editing remains in T021. Moving-average toggle is local chart state, while analytic filters are URL-backed.
+- Learnings: Keeping filter values in the URL lets the server page and API resolve the same date and sample scope and preserves filters when navigating to Chats.
+- Next: T016
