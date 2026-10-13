@@ -75,3 +75,9 @@ Format per entry:
 - Decisions/deviations: Provider model defaults are configurable through `GROQ_MODEL` and `GEMINI_MODEL`; defaults checked against current official model catalogs. Provider adapters return errors to the orchestration layer, which owns throttling and retry sequencing.
 - Learnings: Per-provider throttling must serialize concurrent waiters to preserve the minimum interval between real calls.
 - Next: T011
+## 2026-10-14  T011  Tracking orchestrator + run UI   [done]
+- Changed: Added authenticated tracking creation/status/history APIs, async prompt/provider orchestration with mention/sentiment/citation persistence and per-pair failure rows, plus Overview run controls with simulated status, progress bar, and signal animation. Mention detection now exposes the source index needed to score every hit.
+- Verified: `npm run verify` passed (typecheck, lint, 32 tests, production build). Injected-provider tests confirm failures do not stop successful pairs, chat rows preserve locale and simulation flags, `brands_found` stores each brand's sentiment, citations persist, no-key mocks run, and `total_expected` is active prompts × providers.
+- Decisions/deviations: Persisted provider failure details as a generic error to avoid leaking provider response bodies or credentials. Tracking responses and UI label simulated rows/runs explicitly.
+- Learnings: A provider error row counts as a completed prompt/provider pair so run progress reaches its expected total even when a platform is unavailable.
+- Next: T012

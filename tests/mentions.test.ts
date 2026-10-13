@@ -8,8 +8,8 @@ describe("detectBrands", () => {
       { id: "monday", name: "Monday.com" },
     ]);
     expect(hits).toEqual([
-      { brandId: "monday", name: "Monday.com", position: 1 },
-      { brandId: "asana", name: "Asana", position: 2 },
+      { brandId: "monday", name: "Monday.com", position: 1, index: 4 },
+      { brandId: "asana", name: "Asana", position: 2, index: 18 },
     ]);
   });
 
@@ -17,7 +17,7 @@ describe("detectBrands", () => {
     const hits = detectBrands("ACME Studio is also called Acme Co. ACME.", [
       { id: "acme", name: "Acme Studio", aliases: ["Acme Co", "ACME"] },
     ]);
-    expect(hits).toEqual([{ brandId: "acme", name: "Acme Studio", position: 1 }]);
+    expect(hits).toEqual([{ brandId: "acme", name: "Acme Studio", position: 1, index: 0 }]);
   });
 
   it("does not match a name embedded in a larger word and omits absent brands", () => {
@@ -32,8 +32,8 @@ describe("detectBrands", () => {
       { id: "cpp", name: "C++" },
       { id: "asana", name: "Asana" },
     ])).toEqual([
-      { brandId: "asana", name: "Asana", position: 1 },
-      { brandId: "cpp", name: "C++", position: 2 },
+      { brandId: "asana", name: "Asana", position: 1, index: 1 },
+      { brandId: "cpp", name: "C++", position: 2, index: 27 },
     ]);
   });
 
@@ -42,8 +42,8 @@ describe("detectBrands", () => {
       { id: "acme", name: "Acme", aliases: ["Rival"] },
       { id: "rival", name: "Rival" },
     ])).toEqual([
-      { brandId: "acme", name: "Acme", position: 1 },
-      { brandId: "rival", name: "Rival", position: 2 },
+      { brandId: "acme", name: "Acme", position: 1, index: 0 },
+      { brandId: "rival", name: "Rival", position: 2, index: 0 },
     ]);
   });
 });

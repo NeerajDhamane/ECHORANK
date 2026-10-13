@@ -39,7 +39,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T010 Providers (M4)** — Dep: T002 · Ref: ARCHITECTURE §5, AGENTS hard rules (cost)
   Do: `lib/providers/{types,mock,groq,gemini,registry,throttle}.ts`, `lib/config.ts` (model names). Mock: seeded by prompt+name+date, sometimes omits the brand, templates mention domains. Registry: real providers only when env keys exist; always adds clearly-labelled simulated platforms. `withRetry` (429/503, exponential backoff) and `sleep`.
   Verify (tests, no network): registry with no env → only mocks with `isMock=true`; `withRetry` retries then succeeds (fake timers) and rethrows non-retryable errors; mock is deterministic for same inputs/day.
-- [ ] **T011 Tracking orchestrator + run UI (M5b)** — Dep: T006–T010 · Ref: ARCHITECTURE §4
+- [x] **T011 Tracking orchestrator + run UI (M5b)** — Dep: T006–T010 · Ref: ARCHITECTURE §4
   Do: `lib/tracking.ts` `runTracking` (fire-and-forget), `POST /api/brands/:id/track`, `GET /api/runs/:id`, `GET /api/brands/:id/runs`; store `brands_found` with per-brand sentiment; failures → error rows and continue; "Run tracking" button with progress bar + signal ping.
   Verify (tests with injected fake providers): one throwing provider doesn't stop others; rows have `locale`, `is_simulated`; `total_expected` correct; with no keys the run completes using mocks.
 - [ ] **T012 Seed/demo data** — Dep: T011

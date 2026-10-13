@@ -1,7 +1,7 @@
 export type BrandRef = { id: string; name: string; aliases?: string[] | null };
-export type BrandHit = { brandId: string; name: string; position: number };
+export type BrandHit = { brandId: string; name: string; position: number; index: number };
 
-type IndexedHit = BrandHit & { firstIndex: number; inputIndex: number };
+type IndexedHit = Omit<BrandHit, "index"> & { firstIndex: number; inputIndex: number };
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -28,5 +28,5 @@ export function detectBrands(text: string, brands: BrandRef[]): BrandHit[] {
   });
 
   found.sort((a, b) => a.firstIndex - b.firstIndex || a.inputIndex - b.inputIndex);
-  return found.map(({ brandId, name }, index) => ({ brandId, name, position: index + 1 }));
+  return found.map(({ brandId, name, firstIndex }, index) => ({ brandId, name, position: index + 1, index: firstIndex }));
 }
