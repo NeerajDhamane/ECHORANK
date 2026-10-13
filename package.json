@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:migrate": "node -e \"console.log('Database migrations are implemented in T002')\"",
+    "db:migrate": "tsx src/db/migrate.ts",
     "predev": "npm run db:migrate",
     "prebuild": "npm run db:migrate",
     "typecheck": "tsc --noEmit",

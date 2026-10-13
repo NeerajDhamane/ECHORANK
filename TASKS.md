@@ -10,7 +10,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T001 Scaffold project** — Dep: none · Ref: ARCHITECTURE §2–3, DESIGN §1
   Do: create Next.js app (TypeScript, Tailwind, ESLint, App Router, `src/`, alias `@/*`, npm) in the repo root (if the scaffolder refuses a non-empty folder, scaffold in a temp dir and move files; keep `docs/`, `AGENTS.md`, `TASKS.md`, `PROGRESS.md`). Install: `better-sqlite3 drizzle-orm jose bcryptjs zod recharts date-fns lucide-react clsx @fontsource/inter @fontsource/space-grotesk @fontsource/jetbrains-mono`; dev: `drizzle-kit @types/better-sqlite3 @types/bcryptjs tsx vitest`. Add scripts: `db:migrate`, `predev`, `prebuild`, `typecheck` (`tsc --noEmit`), `test` (`vitest run`), `verify` (`typecheck && lint && test && build`), `seed`, `smoke`. `vitest.config.ts` with `@` alias. Add tokens to `globals.css`, import fontsource CSS in `layout.tsx`, `.env.example`, `.gitignore` (`.env*`, `*.db*`). Placeholder landing page.
   Verify: `npm run verify` passes (tests may be a single trivial test); `npm run dev` serves `/`. Commit lockfile.
-- [ ] **T002 Database layer** — Dep: T001 · Ref: ARCHITECTURE §7, docs/schema.sql
+- [x] **T002 Database layer** — Dep: T001 · Ref: ARCHITECTURE §7, docs/schema.sql
   Do: `src/db/migrate.ts` executes `docs/schema.sql` idempotently; `src/db/index.ts` singleton (WAL, foreign_keys, `globalThis` cache); `src/db/schema.ts` Drizzle definitions for all tables; `src/lib/time.ts` with `toSqlTime(dateOrIso)`.
   Verify: `npm run db:migrate` twice without error; unit tests: insert/read a user; `toSqlTime("2026-08-30T10:00:00.000Z") === "2026-08-30 10:00:00"`.
 - [ ] **T003 Authentication (M1)** — Dep: T002 · Ref: PRD §6 story 9, ARCHITECTURE §8
