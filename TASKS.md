@@ -7,7 +7,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 **Suggested schedule (14 days, adjust freely):** D1 T001–T003 · D2 T004–T006 · D3 T007–T010 · D4 T011–T013 · D5 T014–T015 + start H1/H2 · D6 T016–T017 · D7 T018–T019 · D8 T020–T021, T022 · D9 T023–T025 · D10 T026–T027 · D11 T028–T029 + run H5 · D12 T030–T031, T032–T033 · D13 T034–T037 · D14 T038 + human tasks, buffer.
 
 ## Phase 0 — Foundation (M1–M3)
-- [ ] **T001 Scaffold project** — Dep: none · Ref: ARCHITECTURE §2–3, DESIGN §1
+- [x] **T001 Scaffold project** — Dep: none · Ref: ARCHITECTURE §2–3, DESIGN §1
   Do: create Next.js app (TypeScript, Tailwind, ESLint, App Router, `src/`, alias `@/*`, npm) in the repo root (if the scaffolder refuses a non-empty folder, scaffold in a temp dir and move files; keep `docs/`, `AGENTS.md`, `TASKS.md`, `PROGRESS.md`). Install: `better-sqlite3 drizzle-orm jose bcryptjs zod recharts date-fns lucide-react clsx @fontsource/inter @fontsource/space-grotesk @fontsource/jetbrains-mono`; dev: `drizzle-kit @types/better-sqlite3 @types/bcryptjs tsx vitest`. Add scripts: `db:migrate`, `predev`, `prebuild`, `typecheck` (`tsc --noEmit`), `test` (`vitest run`), `verify` (`typecheck && lint && test && build`), `seed`, `smoke`. `vitest.config.ts` with `@` alias. Add tokens to `globals.css`, import fontsource CSS in `layout.tsx`, `.env.example`, `.gitignore` (`.env*`, `*.db*`). Placeholder landing page.
   Verify: `npm run verify` passes (tests may be a single trivial test); `npm run dev` serves `/`. Commit lockfile.
 - [ ] **T002 Database layer** — Dep: T001 · Ref: ARCHITECTURE §7, docs/schema.sql
