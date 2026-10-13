@@ -123,7 +123,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
   Verify: renders with the sample results; empty state if file absent.
 
 ## Phase 8 — Hardening
-- [ ] **T034 README & docs** — Dep: T031 — setup from clean clone in ≤ 5 commands, scripts table, env table, architecture summary, honest limitations, "AI-assistant use" disclosure section (fill accurately), screenshots folder placeholder.
+- [x] **T034 README & docs** — Dep: T031 — setup from clean clone in ≤ 5 commands, scripts table, env table, architecture summary, honest limitations, "AI-assistant use" disclosure section (fill accurately), screenshots folder placeholder.
 - [ ] **T035 Accessibility & responsive pass** — Dep: T027 — walk DESIGN §7 checklist on every page; fix focus, labels, contrast, mobile tables; record findings in PROGRESS.
 - [ ] **T036 Security test suite** — Dep: T031 — table-driven tests: every brand-scoped route returns 404 for a non-owner; SSRF matrix; CSV injection; rate-limit tests; no secrets in responses.
 - [ ] **T037 Performance & cost pass** — Dep: T036 — verify indexes used (`EXPLAIN QUERY PLAN` on analytics queries), no N+1 in list endpoints, per-run prompt/provider caps, caching of public checker; document in PROGRESS.

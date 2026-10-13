@@ -213,3 +213,9 @@ Format per entry:
 - Decisions/deviations: Published sample sizes are labeled as not stated in the project specification instead of being inferred. Invalid result JSON is handled like unavailable results.
 - Learnings: Restricting the server-side results reader to a fixed project path keeps Next.js output tracing scoped.
 - Next: T034
+## 2026-10-14  T034  README & docs  [done]
+- Changed: Replaced the stock Next.js README with a four-command clean-checkout quick start, Node/native SQLite guidance, scripts and environment tables, current architecture/API overview, operational and research limitations, accurate Codex use disclosure, and screenshots placeholder. Corrected `.env.example` to say outbound email is not implemented.
+- Verified: `npm run verify` passed with `VITEST_MAX_THREADS=1`: typecheck, lint, 140 tests across 46 files, and production build. Cross-checked README scripts and settings against package.json, runtime env references, and implementation.
+- Decisions/deviations: Recommended Node 22 LTS for clean setup while disclosing that the current project was verified on Node 24.20.0. Documented the seeded demo credential as public and local-only.
+- Learnings: The environment template contained an unused Resend key; documentation now explicitly reflects the app's in-app-only alerts.
+- Next: T035
