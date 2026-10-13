@@ -24,6 +24,7 @@ type QueryParams = Record<string, string | number>;
 type ScopedChat = {
   runId: string;
   startedAt: string;
+  createdAt: string;
   platform: string;
   mentioned: number;
   position: number | null;
@@ -88,7 +89,7 @@ export function whereClause(scope: Scope): { sql: string; params: QueryParams } 
 function scopedChats(scope: Scope, database: Database.Database): ScopedChat[] {
   const where = whereClause(scope);
   return database.prepare(`
-    SELECT c.run_id AS runId, r.started_at AS startedAt, c.platform, c.mentioned,
+    SELECT c.run_id AS runId, r.started_at AS startedAt, c.created_at AS createdAt, c.platform, c.mentioned,
       c.position, c.sentiment, c.sentiment_score AS sentimentScore,
       c.brands_found AS brandsFound
     FROM chats AS c
@@ -254,4 +255,80 @@ export function getOverview(scope: Scope, database: Database.Database = getSqlit
     recentChats,
     simulatedIncluded: scope.includeSimulated === true,
   };
+}
+
+function instant(value: Date | string): Date {
+  return new Date(`${toSqlTime(value).replace(" ", "T")}Z`);
+}
+
+function previousScope(scope: Scope): Scope | null {
+  if (scope.dateFrom === undefined || scope.dateTo === undefined) return null;
+  const start = instant(scope.dateFrom);
+  const end = instant(scope.dateTo);
+  if (typeof scope.dateTo === "string" && /^\d{4}-\d{2}-\d{2}$/u.test(scope.dateTo)) end.setUTCDate(end.getUTCDate() + 1);
+  else end.setUTCSeconds(end.getUTCSeconds() + 1);
+  const duration = end.getTime() - start.getTime();
+  if (!Number.isFinite(duration) || duration < 1000) return null;
+  return { ...scope, dateFrom: new Date(start.getTime() - duration).toISOString(), dateTo: new Date(start.getTime() - 1000).toISOString() };
+}
+
+/** Shared monthly values used by the printable report, including sample counts. */
+export function monthlySummary(scope: Scope, database: Database.Database = getSqlite()) {
+  const rows = scopedChats(scope, database);
+  const groups = new Map<string, { answers: number; mentions: number; rankTotal: number; rankN: number; positive: number; sentimentN: number }>();
+  for (const row of rows) {
+    const month = row.createdAt.slice(0, 7);
+    let group = groups.get(month);
+    if (!group) { group = { answers: 0, mentions: 0, rankTotal: 0, rankN: 0, positive: 0, sentimentN: 0 }; groups.set(month, group); }
+    group.answers += 1;
+    if (row.mentioned === 1) {
+      group.mentions += 1;
+      if (row.position !== null) { group.rankTotal += row.position; group.rankN += 1; }
+      if (row.sentiment !== null && row.sentimentScore !== null) { group.sentimentN += 1; if (row.sentiment === "positive") group.positive += 1; }
+    }
+  }
+  const populated = new Map([...groups.entries()].map(([month, value]) => [month, {
+    month, answers: value.answers, visibility: value.answers ? value.mentions / value.answers * 100 : null,
+    positiveSentiment: value.sentimentN ? value.positive / value.sentimentN * 100 : null,
+    sentimentN: value.sentimentN, averageRank: value.rankN ? value.rankTotal / value.rankN : null, rankN: value.rankN,
+  }]));
+  if (scope.dateFrom === undefined || scope.dateTo === undefined) return [...populated.values()].sort((a, b) => a.month.localeCompare(b.month));
+  const first = instant(scope.dateFrom); const last = instant(scope.dateTo);
+  const month = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth(), 1));
+  const lastMonth = new Date(Date.UTC(last.getUTCFullYear(), last.getUTCMonth(), 1));
+  const result: Array<{ month: string; answers: number; visibility: number | null; positiveSentiment: number | null; sentimentN: number; averageRank: number | null; rankN: number }> = [];
+  while (month <= lastMonth) {
+    const key = month.toISOString().slice(0, 7);
+    result.push(populated.get(key) ?? { month: key, answers: 0, visibility: null, positiveSentiment: null, sentimentN: 0, averageRank: null, rankN: 0 });
+    month.setUTCMonth(month.getUTCMonth() + 1);
+  }
+  return result;
+}
+
+/** Per-prompt visibility and equal-length previous-window change using the shared scope predicate. */
+export function promptPerformance(scope: Scope, database: Database.Database = getSqlite()) {
+  const summarize = (selectedScope: Scope) => {
+    const where = whereClause(selectedScope);
+    const rows = database.prepare(`SELECT c.prompt_id AS promptId, p.text AS prompt, COUNT(*) AS answers,
+      SUM(CASE WHEN c.mentioned = 1 THEN 1 ELSE 0 END) AS mentions
+      FROM chats c JOIN prompts p ON p.id = c.prompt_id ${where.sql}
+      GROUP BY c.prompt_id, p.text`).all(where.params) as Array<{ promptId: string; prompt: string; answers: number; mentions: number }>;
+    return rows;
+  };
+  const current = summarize(scope);
+  const previous = previousScope(scope);
+  const prior = new Map((previous ? summarize(previous) : []).map((item) => [item.promptId, item]));
+  return current.map((item) => {
+    const old = prior.get(item.promptId);
+    const visibility = item.answers ? item.mentions / item.answers * 100 : null;
+    const previousVisibility = old?.answers ? old.mentions / old.answers * 100 : null;
+    return { ...item, visibility, previousVisibility, delta: visibility !== null && previousVisibility !== null ? visibility - previousVisibility : null };
+  }).sort((a, b) => b.answers - a.answers || (b.visibility ?? 0) - (a.visibility ?? 0) || a.prompt.localeCompare(b.prompt)).slice(0, 20);
+}
+
+/** Real and simulated successful-answer counts for the same non-simulation filters. */
+export function simulationCounts(scope: Scope, database: Database.Database = getSqlite()) {
+  const where = whereClause({ ...scope, includeSimulated: true });
+  const rows = database.prepare(`SELECT c.is_simulated AS simulated, COUNT(*) AS answers FROM chats c ${where.sql} GROUP BY c.is_simulated`).all(where.params) as Array<{ simulated: number; answers: number }>;
+  return { real: rows.find((row) => row.simulated === 0)?.answers ?? 0, simulated: rows.find((row) => row.simulated === 1)?.answers ?? 0 };
 }

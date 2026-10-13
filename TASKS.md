@@ -96,7 +96,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T026 Discovery feed (M16)** — Dep: T019
   Do: `lib/discovery/{types,hn,stackexchange,reddit,rank}.ts`; `toQuery` (stopword strip, ≤6 keywords); relevance = 0.5·norm(log1p(comments)) + 0.3·norm(log1p(score)) + 0.2·exp(−ageDays/365), ×1.25 if a competitor is named; refresh API (≤10 prompts/refresh, sequential, ≥1s apart, descriptive User-Agent), `UNIQUE(brand_id,url)` upsert; page with Save/Dismiss/Open only. Reddit only if env keys exist; HN + StackExchange need none.
   Verify (tests with mocked fetch): works with no Reddit creds; refresh twice → no duplicates; **no code path performs a non-GET request to an external site except Reddit's token POST**; no reply/post UI exists.
-- [ ] **T027 Reports & export (M21)** — Dep: T020, T017, T019, T018
+- [x] **T027 Reports & export (M21)** — Dep: T020, T017, T019, T018
   Do: report page (light theme, print CSS, sections per DESIGN), methodology footer (real vs simulated counts, n, range), CSV export endpoints, share snapshot (`reports` table, unguessable token, stored JSON, revocable) + `/r/[token]`.
   Verify: report KPIs equal Overview KPIs for the same range (test); shared link unchanged after new runs.
 - [ ] **T028 Alerts & scheduler (M22)** — Dep: T011, T014

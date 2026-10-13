@@ -171,3 +171,9 @@ Format per entry:
 - Decisions/deviations: Existing `discovery_items` schema already contains the required unique brand/URL key; its `subreddit` column stores each source's community label. Unavailable source calls are counted and refresh continues.
 - Learnings: Sharing a paced fetch wrapper across adapters enforces the delay even between Reddit token exchange and its GET search while keeping tests fully offline.
 - Next: T027
+## 2026-10-14  T027  Reports & export   [done]
+- Changed: Replaced the report placeholder with a print-styled light report covering dashboard KPIs, monthly trend, top prompt performance with prior-period change, competitor ranking, citations, top gaps, open recommendations, and real/simulated methodology. Added chats/ranking/sources CSV downloads, copyable public snapshot links with owner-scoped revocation, and read-only `/r/[token]` rendering.
+- Verified: `npm run verify` passed (typecheck, lint, 116 tests, production build). Tests assert report KPIs equal `getOverview`, include per-range real/simulated counts and empty months, verify snapshot values stay frozen after new chats and revocation hides the snapshot, and check share/export route authorization and validation.
+- Decisions/deviations: Report analytics are composed from the existing shared analytics, ranking, source, and gaps services. A small set of monthly and per-prompt rollups live in `analytics.ts` to keep metric logic centralized. Next.js 16.4 requires `instant = false` for the token route's request-time lookup.
+- Learnings: Saving the fully rendered report data at link creation decouples public sharing from later tracking updates while retaining deletion-based revocation.
+- Next: T028
