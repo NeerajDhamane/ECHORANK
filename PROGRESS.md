@@ -51,3 +51,9 @@ Format per entry:
 - Decisions/deviations: Prompt visibility, rank, and sentiment display “—” until tracking runs exist; no run metrics are invented. Extended migration 002 for `prompts.deleted_at`.
 - Learnings: Keeping prompt tombstones alongside brand tombstones preserves the context needed to interpret historical chat rows.
 - Next: T007
+## 2026-10-14  T007  Mention detection   [done]
+- Changed: Added `detectBrands` with escaped case-insensitive literal matching, Unicode-aware lookaround boundaries, aliases, earliest-match ordering, and one ranked hit per brand.
+- Verified: `npm run verify` passed (typecheck, lint, 16 tests, production build). Detector tests cover required brand order, case-insensitive aliases, absent and embedded names, punctuation-adjacent matches, and C++ regex escaping.
+- Decisions/deviations: none.
+- Learnings: Ranking each brand by its earliest canonical or alias match avoids alias order changing reported position.
+- Next: T008

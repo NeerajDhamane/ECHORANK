@@ -27,7 +27,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
   Verify: suggestions never duplicate existing prompts (test); a prompt with no runs shows "—" not "0%". Prompt removal soft-deletes rows so historical chats keep their prompt reference.
 
 ## Phase 1 — Core loop (M4–M7)
-- [ ] **T007 Mention detection (M5a)** — Dep: T002 · Ref: PRD §7
+- [x] **T007 Mention detection (M5a)** — Dep: T002 · Ref: PRD §7
   Do: `lib/analysis/mentions.ts` `detectBrands` — case-insensitive, **lookaround boundaries** (not `\b`), aliases, first-mention index → ascending position.
   Verify (tests): "Try Monday.com or Asana" → Monday.com pos 1; alias counts as same brand; absent brand not returned; punctuation-adjacent names ("(Asana)") match; `C++`-style names don't crash (escaped).
 - [ ] **T008 Sentiment (M6)** — Dep: T002
