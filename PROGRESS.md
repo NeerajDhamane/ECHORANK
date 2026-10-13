@@ -39,3 +39,9 @@ Format per entry:
 - Decisions/deviations: Workspace pages remain honest placeholders pending their dependent data tasks; query filters update the URL only.
 - Learnings: Next.js `usePathname` under Cache Components needs Suspense for unresolved dynamic brand routes.
 - Next: T005
+## 2026-10-14  T005  Brands & competitors   [done]
+- Changed: Added ownership-checked brand/competitor APIs, brand dashboard and create form, editable Settings with aliases and competitor management, and transactional soft deletion. Added `brands.deleted_at` migration 001; tombstones retain historical records, including append-only chats.
+- Verified: `npm run verify` passed (typecheck, lint, 8 tests, production build). Tests cover cross-user 404 read/delete, alias JSON storage, retained history, zero dangling brand references across all brand-scoped tables, and idempotent migration of a legacy database without `deleted_at`.
+- Decisions/deviations: Applied the user's soft-delete decision to resolve the conflict with the append-only chat rule; the architecture and task verification now describe retained tombstones instead of hard cascades.
+- Learnings: Keeping tombstone brand rows provides a stable target for historical foreign references even though the current schema does not declare foreign keys.
+- Next: T006

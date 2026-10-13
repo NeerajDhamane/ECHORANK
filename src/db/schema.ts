@@ -31,6 +31,7 @@ export const brands = sqliteTable(
     industry: text("industry"),
     autoTrack: integer("auto_track").notNull().default(0),
     trackFrequency: text("track_frequency").default("daily"),
+    deletedAt: text("deleted_at"),
     createdAt: createdAt(),
   },
   (table) => [

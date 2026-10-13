@@ -97,7 +97,7 @@ All JSON. Success returns the payload directly; errors return `{ "error": string
 | Area | Method + path | Notes |
 |---|---|---|
 | Auth | POST `/api/auth/signup` · `/login` · `/logout`; GET `/api/auth/me` | generic 401 for bad credentials |
-| Brands | GET/POST `/api/brands`; GET/PATCH/DELETE `/api/brands/:id`; POST/DELETE `/api/brands/:id/competitors` | delete cascades explicitly in a transaction |
+| Brands | GET/POST `/api/brands`; GET/PATCH/DELETE `/api/brands/:id`; POST/DELETE `/api/brands/:id/competitors` | DELETE soft-deletes in a transaction; the tombstone preserves append-only chat history and keeps its references valid |
 | Prompts | GET/POST `/api/brands/:id/prompts` (`?status=`, `?suggest=1`); PATCH/DELETE `…/prompts/:pid`; POST `…/topics` | `?suggest=1` returns template suggestions |
 | Tracking | POST `/api/brands/:id/track`; GET `/api/runs/:runId`; GET `/api/brands/:id/runs` | async + polling |
 | Insight | GET `/api/brands/:id/{overview,chats,sources,ranking,gaps}`; GET `…/chats/:chatId` | all accept Scope query params |
@@ -111,7 +111,7 @@ All JSON. Success returns the payload directly; errors return `{ "error": string
 | Developer | GET/POST/DELETE `/api/api-keys`; `/api/v1/*`; `/api/mcp` | key shown once; hashed at rest |
 
 ## 7. Database
-Full SQL: **`docs/schema.sql`** (Appendix A). Rules: text UUID primary keys; competitors are `brands` rows (`owner_brand_id` set); `chats` is **append-only**; timestamps stored as SQLite `CURRENT_TIMESTAMP` → **`YYYY-MM-DD HH:MM:SS` (UTC)**.
+Full SQL: **`docs/schema.sql`** (Appendix A). Rules: text UUID primary keys; competitors are `brands` rows (`owner_brand_id` set); brands use `deleted_at` tombstones so `chats` remains **append-only**; timestamps stored as SQLite `CURRENT_TIMESTAMP` → **`YYYY-MM-DD HH:MM:SS` (UTC)**. Migration 001 adds `brands.deleted_at` to existing databases without removing data.
 > **Timestamp gotcha:** never compare ISO strings (`…T…Z`) against SQLite default timestamps — `' '` sorts before `'T'`, so same-day filters break. Convert every incoming date with `toSqlTime()` (`lib/time.ts`) before querying.
 > Differences from `docs/MASTER_BUILD_PLAN.md` (if present): `tracking_runs` gains `label` and `total_expected`; this document wins on conflicts.
 

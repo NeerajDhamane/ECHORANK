@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS brands (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL,
   owner_brand_id TEXT,              -- NULL = tracked brand; else competitor of that brand
+  deleted_at TEXT,                  -- Soft deletion preserves append-only chat history
   name TEXT NOT NULL,
   aliases TEXT DEFAULT '[]',        -- JSON array of alternate names for mention detection
   website TEXT,
