@@ -165,3 +165,9 @@ Format per entry:
 - Decisions/deviations: Provider enrichment falls back to the deterministic skeleton if a configured real provider fails. No provider is invoked or required by tests.
 - Learnings: Stored brand IDs on mention records make it possible to select only active tracked competitors when deriving evidence sentences.
 - Next: T026
+## 2026-10-14  T026  Discovery feed   [done]
+- Changed: Added Hacker News Algolia and Stack Exchange GET adapters plus optional Reddit OAuth/search, prompt keyword extraction, transparent log-normalized relevance and competitor boost, paced sequential refresh (maximum ten active prompts), saved/dismissed status, brand-owned APIs, and a feed UI with Open, Save, and Dismiss actions.
+- Verified: `npm run verify` passed (typecheck, lint, 110 tests, production build). Mocked fetch tests prove the no-Reddit path works, only Reddit token exchange uses POST, source calls carry a descriptive User-Agent and are spaced by 1 second, scoring/competitor boost is deterministic, refresh twice upserts by brand+URL while preserving saved status, and each refresh searches at most ten prompts. Route tests cover ownership and status/filter validation.
+- Decisions/deviations: Existing `discovery_items` schema already contains the required unique brand/URL key; its `subreddit` column stores each source's community label. Unavailable source calls are counted and refresh continues.
+- Learnings: Sharing a paced fetch wrapper across adapters enforces the delay even between Reddit token exchange and its GET search while keeping tests fully offline.
+- Next: T027
