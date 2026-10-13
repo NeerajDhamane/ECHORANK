@@ -123,3 +123,9 @@ Format per entry:
 - Decisions/deviations: R8 and R9 are no-ops until T023 adds crawl audit and structured-data evidence. Recommendations exclude simulated answers. Rationale text labels rules as heuristics and avoids unsupported causal or literature claims.
 - Learnings: Evaluating each completed real run and persisting a rule/subject key makes repeated generation idempotent while retaining a visible status workflow.
 - Next: T019
+## 2026-10-14  T019  Gap opportunities   [done]
+- Changed: Added shared-scope gap scoring API and page. Active prompts are ranked by `rivalRate × (1 − yourRate)`, strongest active competitor breaks ties, fully visible/no-rival prompts are omitted, and fewer-than-three samples are visibly greyed. Brief and Discovery actions are disabled until T025/T026.
+- Verified: `npm run verify` passed (typecheck, lint, 60 tests, production build). Synthetic SQLite fixtures verify score math, dominant rival, descending score and answer-count tie ordering, 100%-visible exclusion, low-sample marking, shared filters, simulated inclusion, and ownership/query validation.
+- Decisions/deviations: Gaps use only successful answers and active prompts/competitors. No search-volume weights are inferred; percentages show exact counts and sample size.
+- Learnings: Deduplicating each competitor to one hit per answer keeps mention rates bounded by the prompt sample size.
+- Next: T020

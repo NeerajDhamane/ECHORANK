@@ -68,7 +68,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
   Rules: R1 visibility<30% · R2 mentioned-but-uncited ≥50% · R3 negative share>20% · R4 domain cites ≥2 rivals never you · R5 prompt where a rival ≥60% and you 0% · R6 forum domains ≥20% of citations and none yours · R7 visibility fell ≥10 pts over last 2 runs · R8 latest crawl audit score <60 (no-op until T023) · R9 no JSON-LD found (no-op until T023) · R10 avg rank >3 · R11 all healthy.
   Do: `lib/recommendations.ts` (stores `evidence` JSON + `basis` text; dedupes against open recs by rule+subject), API (GET, PATCH status), page grouped Off-page/On-page/Technical with Evidence and "Why this rule?" (hedged wording).
   Verify: one fixture test per rule; rerun doesn't duplicate; `done` hides from default list.
-- [ ] **T019 Gap opportunities (M15)** — Dep: T017
+- [x] **T019 Gap opportunities (M15)** — Dep: T017
   Do: `lib/gaps.ts` (`rivalRate × (1 − yourRate)`, dominant rival), API, page with min-sample guard (n<3 greyed), buttons linking to brief generator and discovery (disabled until those tasks exist).
   Verify: prompt where you're 100% visible never appears; sorted by opportunity.
 - [ ] **T020 Ranking (M19)** — Dep: T015
