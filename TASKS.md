@@ -64,7 +64,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
   Verify: Used % = answers citing domain ÷ answers in scope (test); gap toggle lists only domains citing rivals and never you.
 
 ## Phase 3 — Diagnosis (M14, M15, M19, M20)
-- [ ] **T018 Recommendation engine (M14)** — Dep: T017 · Ref: MASTER_BUILD_PLAN §14 (rule table) if present; else implement R1–R11 below
+- [x] **T018 Recommendation engine (M14)** — Dep: T017 · Ref: MASTER_BUILD_PLAN §14 (rule table) if present; else implement R1–R11 below
   Rules: R1 visibility<30% · R2 mentioned-but-uncited ≥50% · R3 negative share>20% · R4 domain cites ≥2 rivals never you · R5 prompt where a rival ≥60% and you 0% · R6 forum domains ≥20% of citations and none yours · R7 visibility fell ≥10 pts over last 2 runs · R8 latest crawl audit score <60 (no-op until T023) · R9 no JSON-LD found (no-op until T023) · R10 avg rank >3 · R11 all healthy.
   Do: `lib/recommendations.ts` (stores `evidence` JSON + `basis` text; dedupes against open recs by rule+subject), API (GET, PATCH status), page grouped Off-page/On-page/Technical with Evidence and "Why this rule?" (hedged wording).
   Verify: one fixture test per rule; rerun doesn't duplicate; `done` hides from default list.

@@ -117,3 +117,9 @@ Format per entry:
 - Decisions/deviations: Current schema stores normalized domains and domain-level citation counts, not original URL paths. The URLs tab states this limitation instead of deriving or presenting invented citation URLs.
 - Learnings: Source usage percentages must divide distinct citing answers by all successful answers in the active scope; average citations use citations divided by distinct citing answers.
 - Next: T018
+## 2026-10-14  T018  Recommendation engine   [done]
+- Changed: Added explainable R1–R7, R10, and R11 recommendation evaluation from successful real-data runs, evidence/basis persistence, open-item deduplication by rule and subject, run-completion generation, list/status APIs, and Off-page / On-page / Technical cards with evidence, rationale expanders, and To do/In progress/Done controls.
+- Verified: `npm run verify` passed (typecheck, lint, 56 tests, production build). Synthetic SQLite fixtures trigger all implemented thresholds and R11, test R8/R9 remain dormant until crawl data exists, validate R7's two-run decline, and cover deduplication and done filtering; route tests cover ownership, query, and status validation.
+- Decisions/deviations: R8 and R9 are no-ops until T023 adds crawl audit and structured-data evidence. Recommendations exclude simulated answers. Rationale text labels rules as heuristics and avoids unsupported causal or literature claims.
+- Learnings: Evaluating each completed real run and persisting a rule/subject key makes repeated generation idempotent while retaining a visible status workflow.
+- Next: T019

@@ -9,6 +9,7 @@ import { getCompetitors, type BrandRecord } from "@/lib/brand-access";
 import { getProviders } from "@/lib/providers/registry";
 import { createThrottle, withRetry } from "@/lib/providers/throttle";
 import type { AIProvider } from "@/lib/providers/types";
+import { generateRecommendations } from "@/lib/recommendations";
 
 type AppDatabase = typeof db;
 type RetryText = (operation: () => Promise<string>) => Promise<string>;
@@ -115,6 +116,9 @@ export async function runTracking(
 
     database.update(trackingRuns).set({ status: "completed", finishedAt: new Date().toISOString().replace("T", " ").slice(0, 19) })
       .where(eq(trackingRuns.id, runId)).run();
+    if (database === db) {
+      try { generateRecommendations(brand.id, runId); } catch { /* recommendation failures do not invalidate completed tracking data */ }
+    }
   } catch {
     database.update(trackingRuns).set({ status: "failed", finishedAt: new Date().toISOString().replace("T", " ").slice(0, 19) })
       .where(eq(trackingRuns.id, runId)).run();
