@@ -93,3 +93,9 @@ Format per entry:
 - Decisions/deviations: The dedicated Overview API does not exist until T015, so the smoke script checks the current run overview totals against stored chats and run history; it does not create future endpoint scope. Next dev uses webpack in this script because the sandboxed Turbopack process panicked canonicalizing the Windows workspace; webpack passed once run with workspace filesystem access.
 - Learnings: A clean, isolated DB and disabled provider keys make the end-to-end flow repeatable without disturbing developer data or calling external providers.
 - Next: T014
+## 2026-10-14  T014  Analytics service   [done]
+- Changed: Added reusable `Scope`/`whereClause` with UTC inclusive date bounds, optional platform/prompt/tag/locale filters, and simulated exclusion by default. Added prepared-query analytics for per-run visibility, sentiment, platform visibility/rank, share of voice, and top cited sources.
+- Verified: `npm run verify` passed (typecheck, lint, 37 tests, production build). New synthetic SQLite tests hand-check all five metrics, named filters, same-day boundaries, tag filtering, error-row exclusion, and simulated-data inclusion behavior.
+- Decisions/deviations: Date-only `dateTo` includes that entire UTC date; timestamp `dateTo` is inclusive to the supplied second. Metrics use successful answers (`error IS NULL`) per PRD §7.
+- Learnings: Keeping one scoped successful-answer query for the chat-based metrics makes denominator and filter behavior consistent across views.
+- Next: T015

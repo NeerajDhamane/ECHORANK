@@ -50,7 +50,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
   Verify: `npm run smoke` exits 0 on a clean DB.
 
 ## Phase 2 — Insight (M9–M13)
-- [ ] **T014 Analytics service** — Dep: T011 · Ref: PRD §7
+- [x] **T014 Analytics service** — Dep: T011 · Ref: PRD §7
   Do: `lib/analytics.ts`: `Scope`, `whereClause` (uses `toSqlTime`, `includeSimulated`, tag/locale/platform/prompt), `visibilityByRun`, `sentimentBreakdown`, `visibilityByPlatform`, `shareOfVoice`, `topSources` — prepared statements with named params.
   Verify (tests with synthetic chat rows): every metric equals hand-calculated values; simulated excluded by default; date filter correct across same-day boundaries.
 - [ ] **T015 Overview (M9–M11)** — Dep: T014, T004 · Ref: DESIGN Overview
