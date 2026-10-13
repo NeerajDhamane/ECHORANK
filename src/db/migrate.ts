@@ -23,6 +23,12 @@ export function migrateDatabase(
     if (!promptColumns.some((column) => column.name === "deleted_at")) {
       database.exec("ALTER TABLE prompts ADD COLUMN deleted_at TEXT");
     }
+    // Migration 003: record the run that produced an alert for idempotent evaluation.
+    const alertColumns = database.pragma("table_info(alerts)") as Array<{ name: string }>;
+    if (!alertColumns.some((column) => column.name === "source_run_id")) {
+      database.exec("ALTER TABLE alerts ADD COLUMN source_run_id TEXT");
+    }
+    database.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_alerts_dedupe ON alerts(brand_id, rule_id, source_run_id)");
   })();
 }
 

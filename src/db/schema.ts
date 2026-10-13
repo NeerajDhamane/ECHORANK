@@ -228,11 +228,12 @@ export const alerts = sqliteTable(
     id: text("id").primaryKey(),
     brandId: text("brand_id").notNull(),
     ruleId: text("rule_id"),
+    sourceRunId: text("source_run_id"),
     message: text("message").notNull(),
     read: integer("read").notNull().default(0),
     createdAt: createdAt(),
   },
-  (table) => [index("idx_alerts_brand").on(table.brandId)],
+  (table) => [index("idx_alerts_brand").on(table.brandId), uniqueIndex("idx_alerts_dedupe").on(table.brandId, table.ruleId, table.sourceRunId)],
 );
 
 export const reports = sqliteTable(

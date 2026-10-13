@@ -99,7 +99,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T027 Reports & export (M21)** — Dep: T020, T017, T019, T018
   Do: report page (light theme, print CSS, sections per DESIGN), methodology footer (real vs simulated counts, n, range), CSV export endpoints, share snapshot (`reports` table, unguessable token, stored JSON, revocable) + `/r/[token]`.
   Verify: report KPIs equal Overview KPIs for the same range (test); shared link unchanged after new runs.
-- [ ] **T028 Alerts & scheduler (M22)** — Dep: T011, T014
+- [x] **T028 Alerts & scheduler (M22)** — Dep: T011, T014
   Do: `lib/alerts.ts` (`visibility_drop`, `competitor_gain`, `negative_sentiment`, `lost_prompt`; minimum sample ≥10 answers; dedupe), alerts API + bell + page + rule settings, `lib/scheduler.ts` (`node-cron` daily, `globalThis` guard) started from `instrumentation.ts`, `POST /api/cron/track` requiring `CRON_SECRET`.
   Verify (tests): synthetic 10-point drop → exactly one alert, re-evaluating adds none; below-min-sample → none; cron endpoint 401 without secret.
 

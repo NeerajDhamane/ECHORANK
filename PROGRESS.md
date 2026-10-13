@@ -177,3 +177,9 @@ Format per entry:
 - Decisions/deviations: Report analytics are composed from the existing shared analytics, ranking, source, and gaps services. A small set of monthly and per-prompt rollups live in `analytics.ts` to keep metric logic centralized. Next.js 16.4 requires `instant = false` for the token route's request-time lookup.
 - Learnings: Saving the fully rendered report data at link creation decouples public sharing from later tracking updates while retaining deletion-based revocation.
 - Next: T028
+## 2026-10-14  T028  Alerts & scheduler   [done]
+- Changed: Added four configurable alert rules, real-answer minimum-sample checks, run-scoped duplicate protection, automatic alert evaluation after completed runs, owner-checked list/read/rule APIs, unread bell count, alerts page, daily scheduler, and a CRON_SECRET-protected tracking endpoint. Added migration 003 for alerts.source_run_id and its unique dedupe index.
+- Verified: npm run verify passed (typecheck, lint, 120 tests, production build). Alert tests prove a 10-point drop creates exactly one alert, re-evaluation adds none, fewer than 10 answers creates none, scheduler starts once, and cron rejects missing secrets.
+- Decisions/deviations: Alert analytics exclude simulated and failed answers; negative sentiment needs at least 10 analyzed brand mentions. Added node-cron (required by M22) with no other dependency changes. Node 24.20.0 remained in use after approval; existing better-sqlite3 and full verification passed.
+- Learnings: Storing the source run on each alert allows database-level deduplication while preserving subsequent alerts from later runs.
+- Next: T029

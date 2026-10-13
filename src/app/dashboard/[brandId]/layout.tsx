@@ -4,6 +4,7 @@ import { WorkspaceShell } from "@/components/workspace-shell";
 import { getCurrentUser } from "@/lib/require-auth";
 import { getOwnedBrand } from "@/lib/brand-access";
 import { getSqlite } from "@/db";
+import { unreadAlertCount } from "@/lib/alerts";
 
 export default async function BrandLayout({ children, params }: { children: ReactNode; params: Promise<{ brandId: string }> }) {
   const { brandId } = await params;
@@ -15,5 +16,5 @@ export default async function BrandLayout({ children, params }: { children: Reac
   const locales = database.prepare("SELECT DISTINCT locale FROM chats WHERE brand_id = @brandId AND locale IS NOT NULL ORDER BY locale").all({ brandId }) as Array<{ locale: string }>;
   const tags = database.prepare("SELECT id, name FROM tags WHERE user_id = @userId ORDER BY name").all({ userId: user.id }) as Array<{ id: string; name: string }>;
   const filterOptions = { platforms: platforms.map(({ platform }) => platform), locales: locales.map(({ locale }) => locale), tags };
-  return <WorkspaceShell brandId={brandId} brandName={brand.name} filterOptions={filterOptions}>{children}</WorkspaceShell>;
+  return <WorkspaceShell brandId={brandId} brandName={brand.name} filterOptions={filterOptions} unreadAlerts={unreadAlertCount(brandId)}>{children}</WorkspaceShell>;
 }

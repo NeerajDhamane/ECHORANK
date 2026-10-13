@@ -163,6 +163,7 @@ CREATE TABLE IF NOT EXISTS alerts (
   id TEXT PRIMARY KEY,
   brand_id TEXT NOT NULL,
   rule_id TEXT,
+  source_run_id TEXT,
   message TEXT NOT NULL,
   read INTEGER NOT NULL DEFAULT 0,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP

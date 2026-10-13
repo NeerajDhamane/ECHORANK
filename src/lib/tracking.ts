@@ -10,6 +10,7 @@ import { getProviders } from "@/lib/providers/registry";
 import { createThrottle, withRetry } from "@/lib/providers/throttle";
 import type { AIProvider } from "@/lib/providers/types";
 import { generateRecommendations } from "@/lib/recommendations";
+import { evaluateAlerts } from "@/lib/alerts";
 
 type AppDatabase = typeof db;
 type RetryText = (operation: () => Promise<string>) => Promise<string>;
@@ -27,6 +28,7 @@ export function createTrackingRun(
   brandId: string,
   providers: AIProvider[] = getProviders(),
   database: AppDatabase = db,
+  trigger: "manual" | "scheduled" = "manual",
 ): CreatedTrackingRun {
   const activePrompts = database.select({ id: prompts.id }).from(prompts).where(and(
     eq(prompts.brandId, brandId), eq(prompts.status, "active"), isNull(prompts.deletedAt),
@@ -34,7 +36,7 @@ export function createTrackingRun(
   const runId = randomUUID();
   const totalExpected = activePrompts.length * providers.length;
   database.insert(trackingRuns).values({
-    id: runId, brandId, status: "running", trigger: "manual", totalExpected,
+    id: runId, brandId, status: "running", trigger, totalExpected,
   }).run();
   return { runId, totalExpected, status: "running" };
 }
@@ -118,6 +120,7 @@ export async function runTracking(
       .where(eq(trackingRuns.id, runId)).run();
     if (database === db) {
       try { generateRecommendations(brand.id, runId); } catch { /* recommendation failures do not invalidate completed tracking data */ }
+      try { evaluateAlerts(brand.id, runId); } catch { /* alert failures do not invalidate completed tracking data */ }
     }
   } catch {
     database.update(trackingRuns).set({ status: "failed", finishedAt: new Date().toISOString().replace("T", " ").slice(0, 19) })
