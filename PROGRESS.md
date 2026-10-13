@@ -111,3 +111,9 @@ Format per entry:
 - Decisions/deviations: The prompt timeline reflects the current 50-answer result page; filters and pagination are shareable URL parameters. Search matches prompt text and detail reads are constrained to the same owned-brand scope.
 - Learnings: React text nodes preserve untrusted answer markup literally while allowing brand matches to be styled without HTML injection.
 - Next: T017
+## 2026-10-14  T017  Sources   [done]
+- Changed: Added an ownership-checked sources API and scoped Sources page with domain type donut, citation total, Used % and average citations, cited-with brands, Domains/URLs tabs, and a gap-analysis toggle. Summary calculations use successful answers in the same date/platform/tag/locale/simulated scope as analytics; gap domains require competitor evidence and no own-brand evidence.
+- Verified: `npm run verify` passed (typecheck, lint, 51 tests, production build). New synthetic SQLite checks hand-verify answer denominators, citation averages, type totals, simulated exclusion, and that the gap toggle returns only rival-cited domains never associated with the own brand. Route checks cover ownership 404 and invalid query 400.
+- Decisions/deviations: Current schema stores normalized domains and domain-level citation counts, not original URL paths. The URLs tab states this limitation instead of deriving or presenting invented citation URLs.
+- Learnings: Source usage percentages must divide distinct citing answers by all successful answers in the active scope; average citations use citations divided by distinct citing answers.
+- Next: T018

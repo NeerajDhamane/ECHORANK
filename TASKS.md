@@ -59,7 +59,7 @@ How to use: tick `[x]` when done and verified. One task per session. `Dep` = mus
 - [x] **T016 Chats log (M12)** — Dep: T015
   Do: list + detail APIs, page with grouped list, per-run/platform timeline, `Highlighted` component (own amber / rivals muted, escaped text), filters, pagination (50), simulated badge.
   Verify: highlight test (component or pure function); filters work; raw HTML in an answer renders as text.
-- [ ] **T017 Sources (M13)** — Dep: T015
+- [x] **T017 Sources (M13)** — Dep: T015
   Do: sources API + page: Domains/URLs tabs, type donut with total citations, table (Used %, Avg citations, Type, cited-with), **Gap analysis** toggle.
   Verify: Used % = answers citing domain ÷ answers in scope (test); gap toggle lists only domains citing rivals and never you.
 
