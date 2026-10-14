@@ -12,8 +12,8 @@ export function GapsWorkspace({ items, simulatedIncluded, brandId }: { items: Ga
     <div className="page-heading"><p className="eyebrow">BRAND WORKSPACE</p><h1>Gap opportunities</h1><p>Prompts where tracked competitors appear while your brand is less visible. Opportunity is an observed association, not a prediction.</p></div>
     {simulatedIncluded && <Badge variant="simulated">simulated data included</Badge>}
     <Card className="gaps-card"><CardHeader><div><CardTitle>Prompt gaps</CardTitle><p>{items.length} opportunities · {actionable.length} with at least 3 answers</p></div></CardHeader><CardContent>
-      {items.length ? <div className="gaps-table-wrap"><table className="gaps-table"><thead><tr><th>Prompt</th><th>Your rate</th><th>Top rival</th><th>Opportunity</th><th>Next steps</th></tr></thead><tbody>{items.map((item) => <tr key={item.promptId} className={item.lowData ? "gap-low-data" : undefined}>
-        <td><span className="gap-prompt">{item.prompt}</span><small>{item.lowData ? `Low data · n=${item.answers}; interpret cautiously` : `Sample size n=${item.answers}`}</small></td>
+      {items.length ? <div className="gaps-table-wrap"><table className="gaps-table"><thead><tr><th scope="col">Prompt</th><th scope="col">Your rate</th><th scope="col">Top rival</th><th scope="col">Opportunity</th><th scope="col">Next steps</th></tr></thead><tbody>{items.map((item) => <tr key={item.promptId} className={item.lowData ? "gap-low-data" : undefined}>
+        <th scope="row"><span className="gap-prompt">{item.prompt}</span><small>{item.lowData ? `Low data · n=${item.answers}; interpret cautiously` : `Sample size n=${item.answers}`}</small></th>
         <td>{item.yourRate}% <small>n={item.yourMentions}/{item.answers}</small></td>
         <td><b>{item.topRival}</b><small>{item.rivalRate}% · n={item.rivalMentions}/{item.answers}</small></td>
         <td><div className="gap-score"><div className="gap-score-track"><span style={{ width: `${Math.min(item.opportunity * 100, 100)}%` }} /></div><b>{(item.opportunity * 100).toFixed(1)}%</b><small>n={item.answers}</small></div></td>

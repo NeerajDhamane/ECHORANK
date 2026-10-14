@@ -69,6 +69,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 autoComplete="name"
                 className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5 text-sm outline-none focus:border-[var(--signal)] focus:ring-2 focus:ring-[var(--focus)]"
                 id="name"
+                aria-describedby={errorMessage ? "auth-form-error" : undefined}
                 maxLength={80}
                 name="name"
                 required
@@ -81,6 +82,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               autoComplete="email"
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5 text-sm outline-none focus:border-[var(--signal)] focus:ring-2 focus:ring-[var(--focus)]"
               id="email"
+              aria-describedby={errorMessage ? "auth-form-error" : undefined}
               name="email"
               required
               type="email"
@@ -92,6 +94,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               autoComplete={isSignup ? "new-password" : "current-password"}
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5 text-sm outline-none focus:border-[var(--signal)] focus:ring-2 focus:ring-[var(--focus)]"
               id="password"
+              aria-describedby={errorMessage ? "auth-form-error" : undefined}
               minLength={isSignup ? 8 : 1}
               name="password"
               required
@@ -100,7 +103,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           </div>
 
           {errorMessage && (
-            <p className="rounded-lg border border-[var(--negative)]/40 bg-[var(--negative)]/10 px-3 py-2 text-sm text-[var(--negative)]" role="alert">
+            <p id="auth-form-error" className="rounded-lg border border-[var(--negative)]/40 bg-[var(--negative)]/10 px-3 py-2 text-sm text-[var(--negative)]" role="alert">
               {errorMessage}
             </p>
           )}

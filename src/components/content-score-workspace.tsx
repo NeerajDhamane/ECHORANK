@@ -37,8 +37,8 @@ export function ContentScoreWorkspace({ brandId, initialHistory }: { brandId: st
     <div className="page-heading"><p className="eyebrow">TOOLS</p><h1>Content score</h1><p>A transparent checklist for readability and page structure. It does not predict citations or search rankings.</p></div>
     <Card className="content-score-input"><CardHeader><div><CardTitle>Score pasted content</CardTitle><p>Paste draft text or HTML. URL fetching will be available after the safe-fetch task.</p></div></CardHeader><CardContent><form onSubmit={score}>
       <label htmlFor="content-label">Draft label <span>(optional)</span></label><input id="content-label" className="ui-input" maxLength={80} value={label} onChange={(event) => setLabel(event.target.value)} placeholder="e.g. Product page before edits" />
-      <label htmlFor="content-to-score">Content</label><Textarea id="content-to-score" required maxLength={100000} value={content} onChange={(event) => setContent(event.target.value)} placeholder="Paste page text or HTML here…" />
-      {error && <p className="form-error" role="alert">{error}</p>}{notice && <p className="form-success" role="status">{notice}</p>}
+      <label htmlFor="content-to-score">Content</label><Textarea id="content-to-score" required maxLength={100000} value={content} onChange={(event) => setContent(event.target.value)} placeholder="Paste page text or HTML here…" aria-describedby={error ? "content-score-error" : undefined} />
+      {error && <p id="content-score-error" className="form-error" role="alert">{error}</p>}{notice && <p className="form-success" role="status">{notice}</p>}
       <div className="content-score-form-footer"><span>{content.length.toLocaleString()} / 100,000 characters</span><Button type="submit" loading={pending} disabled={!content.trim()}>Score content</Button></div>
     </form></CardContent></Card>
     {result ? <Card className="content-score-result"><CardHeader><div><CardTitle>Content structure score</CardTitle><p>Each point comes from one of the checks below. This score is a heuristic, not a performance guarantee.</p></div></CardHeader><CardContent>

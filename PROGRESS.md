@@ -219,3 +219,10 @@ Format per entry:
 - Decisions/deviations: Recommended Node 22 LTS for clean setup while disclosing that the current project was verified on Node 24.20.0. Documented the seeded demo credential as public and local-only.
 - Learnings: The environment template contained an unused Resend key; documentation now explicitly reflects the app's in-app-only alerts.
 - Next: T035
+## 2026-10-14  T035  Accessibility & responsive pass  [done]
+- Changed: Audited shared shell and page components against DESIGN §7. Added scoped table headers, chart labels and keyboard-readable data links, form-error descriptions, and proper pressed-button semantics. The mobile navigation now traps focus, closes on Escape, and restores focus; mobile users retain all workspace filters. Replaced a decorative, nonfunctional user-menu button with a noninteractive marker.
+- Contrast: Raised the muted text token and low-contrast navigation/sample caption colors; the primary muted token now measures 8.36:1 on panels and 9.06:1 on the page background. Visible focus styles and reduced-motion overrides were already in place and were retained.
+- Verified: `npm run verify` passed: typecheck, lint, 140 tests across 46 files, and production build. `git diff --check` passed. Touched table headings now use explicit column and row scopes.
+- Decisions/deviations: No dependencies or schema changes. Mobile filter controls reuse existing URL-backed filters.
+- Learnings: Hiding shared filters at mobile breakpoints had removed access to filtering entirely; rendering the same controls in a compact mobile row preserves the existing URL behavior.
+- Next: T036

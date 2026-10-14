@@ -26,12 +26,12 @@ export function PublicChecker() {
 
   return <>
     <form className="public-check-form" onSubmit={submit}>
-      <label>Brand name<input name="brand" maxLength={60} required placeholder="e.g. Acme Cloud" /></label>
-      <label>What would you ask AI?<textarea name="question" maxLength={200} required rows={3} placeholder="e.g. What are reliable tools for a growing team?" /></label>
+      <label>Brand name<input name="brand" maxLength={60} required placeholder="e.g. Acme Cloud" aria-describedby={message ? "public-check-error" : undefined} /></label>
+      <label>What would you ask AI?<textarea name="question" maxLength={200} required rows={3} placeholder="e.g. What are reliable tools for a growing team?" aria-describedby={message ? "public-check-error" : undefined} /></label>
       <label className="honeypot" aria-hidden="true" tabIndex={-1}>Leave this field empty<input name="website" autoComplete="off" tabIndex={-1} /></label>
       <button className="button button-primary" disabled={busy}>{busy ? "Checking…" : "Check my brand"}</button>
     </form>
-    {message && <p role="alert" className="public-check-message">{message}</p>}
+    {message && <p id="public-check-error" role="alert" className="public-check-message">{message}</p>}
     {result && <section className="public-check-results" aria-live="polite">
       {result.simulated && <p className="simulated-banner"><strong>DEMO MODE: SIMULATED</strong> — no AI provider key is configured, so these answers are illustrative.</p>}
       <h2>{result.mentionedCount} of {result.sampleSize} answers mentioned {"your brand"}</h2>

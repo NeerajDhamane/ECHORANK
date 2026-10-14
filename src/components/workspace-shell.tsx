@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Activity, Bell, BookOpen, ChevronDown, FileText, Gauge, Globe2, Layers, Lightbulb, Menu, MessageSquare, Network, Search, Settings, Shield, Sparkles, Tag, X, Code2 } from "lucide-react";
@@ -48,10 +48,28 @@ function ToolbarFilters({ options }: { options: FilterOptions }) {
 }
 
 function Toolbar({ brandId, brandName, filterOptions, unreadAlerts }: { brandId: string; brandName: string; filterOptions: FilterOptions; unreadAlerts: number }) {
-  return <header className="workspace-topbar"><Link className="brand-lockup workspace-logo" href="/dashboard"><span className="echo-mark" aria-hidden="true"><i /></span><span>EchoRank</span></Link><div className="topbar-tools"><Link className="brand-picker" href="/dashboard" aria-label={`Current brand: ${brandName}`}><span className="brand-avatar">{brandName.slice(0, 1).toUpperCase()}</span><span className="brand-picker-text"><b>{brandName}</b><small>Brand workspace</small></span><ChevronDown size={15} /></Link><span className="toolbar-divider" /><Suspense fallback={<span className="toolbar-filter-placeholder">Filters</span>}><ToolbarFilters options={filterOptions} /></Suspense><Link className="icon-button alert-button" href={`/dashboard/${encodeURIComponent(brandId)}/alerts`} aria-label={`Alerts${unreadAlerts ? `, ${unreadAlerts} unread` : ""}`}><Bell size={18} />{unreadAlerts > 0 && <span className="alert-count">{unreadAlerts > 99 ? "99+" : unreadAlerts}</span>}</Link><button className="user-avatar" type="button" aria-label="User menu">ER</button></div></header>;
+  return <header className="workspace-topbar"><Link className="brand-lockup workspace-logo" href="/dashboard"><span className="echo-mark" aria-hidden="true"><i /></span><span>EchoRank</span></Link><div className="topbar-tools"><Link className="brand-picker" href="/dashboard" aria-label={`Current brand: ${brandName}`}><span className="brand-avatar">{brandName.slice(0, 1).toUpperCase()}</span><span className="brand-picker-text"><b>{brandName}</b><small>Brand workspace</small></span><ChevronDown size={15} /></Link><span className="toolbar-divider" /><Suspense fallback={<span className="toolbar-filter-placeholder">Filters</span>}><ToolbarFilters options={filterOptions} /></Suspense><Link className="icon-button alert-button" href={`/dashboard/${encodeURIComponent(brandId)}/alerts`} aria-label={`Alerts${unreadAlerts ? `, ${unreadAlerts} unread` : ""}`}><Bell size={18} />{unreadAlerts > 0 && <span className="alert-count">{unreadAlerts > 99 ? "99+" : unreadAlerts}</span>}</Link><span className="user-avatar" aria-hidden="true">ER</span></div></header>;
 }
 
 export function WorkspaceShell({ brandId, brandName, filterOptions, unreadAlerts, children }: { brandId: string; brandName: string; filterOptions: FilterOptions; unreadAlerts: number; children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  return <div className="workspace-frame"><Toolbar brandId={brandId} brandName={brandName} filterOptions={filterOptions} unreadAlerts={unreadAlerts} /><div className="workspace-body"><aside className="workspace-sidebar"><div className="sidebar-brand"><span>BRAND WORKSPACE</span><Link href="/dashboard" aria-label="Select brand"><Tag size={15} /><ChevronDown size={13} /></Link></div><Suspense fallback={<div className="nav-placeholder" />}><SidebarNav brandId={brandId} /></Suspense><div className="sidebar-foot"><span className="live-dot" /> Evidence synced as answers are collected</div></aside><main className="workspace-main"><div className="mobile-toolbar"><button className="icon-button" aria-label="Open navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}><Menu size={20} /></button><span>{brandName}</span></div>{children}</main></div>{menuOpen && <div className="mobile-drawer-backdrop" onClick={() => setMenuOpen(false)}><aside className="mobile-drawer" onClick={(event) => event.stopPropagation()}><div className="mobile-drawer-head"><Link className="brand-lockup" href="/dashboard"><span className="echo-mark" aria-hidden="true"><i /></span><span>EchoRank</span></Link><button className="icon-button" aria-label="Close navigation" onClick={() => setMenuOpen(false)}><X size={18} /></button></div><Suspense fallback={<div className="nav-placeholder" />}><SidebarNav brandId={brandId} close={() => setMenuOpen(false)} /></Suspense></aside></div>}</div>;
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const drawer = drawerRef.current;
+    const focusable = () => drawer?.querySelectorAll<HTMLElement>('a[href],button:not([disabled])') ?? [];
+    focusable()[0]?.focus();
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") { setMenuOpen(false); triggerRef.current?.focus(); return; }
+      if (event.key !== "Tab") return;
+      const items = focusable();
+      if (!items.length) return;
+      if (event.shiftKey && document.activeElement === items[0]) { event.preventDefault(); items[items.length - 1]?.focus(); }
+      else if (!event.shiftKey && document.activeElement === items[items.length - 1]) { event.preventDefault(); items[0]?.focus(); }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
+  return <div className="workspace-frame"><Toolbar brandId={brandId} brandName={brandName} filterOptions={filterOptions} unreadAlerts={unreadAlerts} /><div className="workspace-body"><aside className="workspace-sidebar"><div className="sidebar-brand"><span>BRAND WORKSPACE</span><Link href="/dashboard" aria-label="Select brand"><Tag size={15} /><ChevronDown size={13} /></Link></div><Suspense fallback={<div className="nav-placeholder" />}><SidebarNav brandId={brandId} /></Suspense><div className="sidebar-foot"><span className="live-dot" /> Evidence synced as answers are collected</div></aside><main className="workspace-main"><div className="mobile-toolbar"><button ref={triggerRef} className="icon-button" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(true)}><Menu size={20} /></button><span>{brandName}</span></div><div className="mobile-filters"><Suspense fallback={null}><div className="mobile-filter-controls"><ToolbarFilters options={filterOptions} /></div></Suspense></div>{children}</main></div>{menuOpen && <div className="mobile-drawer-backdrop" onClick={() => { setMenuOpen(false); triggerRef.current?.focus(); }}><aside id="mobile-navigation" ref={drawerRef} className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Workspace navigation" onClick={(event) => event.stopPropagation()}><div className="mobile-drawer-head"><Link className="brand-lockup" href="/dashboard"><span className="echo-mark" aria-hidden="true"><i /></span><span>EchoRank</span></Link><button className="icon-button" aria-label="Close navigation" onClick={() => { setMenuOpen(false); triggerRef.current?.focus(); }}><X size={18} /></button></div><Suspense fallback={<div className="nav-placeholder" />}><SidebarNav brandId={brandId} close={() => { setMenuOpen(false); triggerRef.current?.focus(); }} /></Suspense></aside></div>}</div>;
 }
