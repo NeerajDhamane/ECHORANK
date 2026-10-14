@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db, getSqlite } from "@/db";
 import { chats, prompts, trackingRuns } from "@/db/schema";
 import { detectBrands } from "@/lib/analysis/mentions";
@@ -23,6 +23,20 @@ type TrackingDependencies = {
 
 export type CreatedTrackingRun = { runId: string; totalExpected: number; status: "running" };
 
+/** Keep one tracking run within the free-tier workload budget. */
+export const MAX_PROMPTS_PER_RUN = 50;
+export const MAX_PROVIDERS_PER_RUN = 5;
+
+function boundedProviders(providers: AIProvider[]): AIProvider[] {
+  return providers.slice(0, MAX_PROVIDERS_PER_RUN);
+}
+
+function activePromptsForRun(brandId: string, database: AppDatabase) {
+  return database.select().from(prompts).where(and(
+    eq(prompts.brandId, brandId), eq(prompts.status, "active"), isNull(prompts.deletedAt),
+  )).orderBy(prompts.createdAt, prompts.id).limit(MAX_PROMPTS_PER_RUN).all();
+}
+
 /** Create a run using the current active-prompt and provider counts. */
 export function createTrackingRun(
   brandId: string,
@@ -30,11 +44,10 @@ export function createTrackingRun(
   database: AppDatabase = db,
   trigger: "manual" | "scheduled" = "manual",
 ): CreatedTrackingRun {
-  const activePrompts = database.select({ id: prompts.id }).from(prompts).where(and(
-    eq(prompts.brandId, brandId), eq(prompts.status, "active"), isNull(prompts.deletedAt),
-  )).all();
+  const activePrompts = activePromptsForRun(brandId, database);
+  const cappedProviders = boundedProviders(providers);
   const runId = randomUUID();
-  const totalExpected = activePrompts.length * providers.length;
+  const totalExpected = activePrompts.length * cappedProviders.length;
   database.insert(trackingRuns).values({
     id: runId, brandId, status: "running", trigger, totalExpected,
   }).run();
@@ -74,15 +87,14 @@ export async function runTracking(
   try {
     const run = database.select().from(trackingRuns).where(eq(trackingRuns.id, runId)).get();
     if (!run || run.status !== "running" || run.brandId !== brand.id) return;
-    const activePrompts = database.select().from(prompts).where(and(
-      eq(prompts.brandId, brand.id), eq(prompts.status, "active"), isNull(prompts.deletedAt),
-    )).orderBy(prompts.createdAt, prompts.id).all();
+    const activePrompts = activePromptsForRun(brand.id, database);
+    const cappedProviders = boundedProviders(providers);
     const activeCompetitors = getCompetitors(brand.id, database).map(({ id, name, aliases }) => ({ id, name, aliases }));
     const brandRefs = [{ id: brand.id, name: brand.name, aliases: brand.aliases }, ...activeCompetitors];
     const ownDomains = brand.website ? [brand.website] : [];
 
     for (const prompt of activePrompts) {
-      for (const provider of providers) {
+      for (const provider of cappedProviders) {
         const locale = prompt.locale ?? "global";
         try {
           if (!provider.isMock) await throttle(provider.id);
@@ -132,12 +144,18 @@ export function getRecentRuns(brandId: string, limit = 10, database: AppDatabase
   const safeLimit = Math.max(1, Math.min(50, Math.floor(limit)));
   const runs = database.select().from(trackingRuns).where(eq(trackingRuns.brandId, brandId))
     .orderBy(desc(trackingRuns.startedAt)).limit(safeLimit).all();
+  const counts = runs.length ? database.select({
+    runId: chats.runId,
+    completed: sql<number>`count(*)`,
+    simulatedCount: sql<number>`sum(case when ${chats.isSimulated} = 1 then 1 else 0 end)`,
+  }).from(chats).where(inArray(chats.runId, runs.map((run) => run.id))).groupBy(chats.runId).all() : [];
+  const byRun = new Map(counts.map((count) => [count.runId, count]));
   return runs.map((run) => {
-    const rows = database.select({ isSimulated: chats.isSimulated }).from(chats).where(eq(chats.runId, run.id)).all();
+    const count = byRun.get(run.id);
     return {
       runId: run.id, status: run.status, startedAt: run.startedAt, finishedAt: run.finishedAt,
-      totalExpected: run.totalExpected, completed: rows.length,
-      simulatedCount: rows.filter((row) => row.isSimulated === 1).length,
+      totalExpected: run.totalExpected, completed: count?.completed ?? 0,
+      simulatedCount: count?.simulatedCount ?? 0,
     };
   });
 }
@@ -145,10 +163,13 @@ export function getRecentRuns(brandId: string, limit = 10, database: AppDatabase
 export function getRunStatus(runId: string, database: AppDatabase = db) {
   const run = database.select().from(trackingRuns).where(eq(trackingRuns.id, runId)).get();
   if (!run) return null;
-  const rows = database.select({ isSimulated: chats.isSimulated }).from(chats).where(eq(chats.runId, runId)).all();
+  const counts = database.select({
+    completed: sql<number>`count(*)`,
+    simulatedCount: sql<number>`sum(case when ${chats.isSimulated} = 1 then 1 else 0 end)`,
+  }).from(chats).where(eq(chats.runId, runId)).get();
   return {
     runId: run.id, brandId: run.brandId, status: run.status, startedAt: run.startedAt, finishedAt: run.finishedAt,
-    totalExpected: run.totalExpected, completed: rows.length,
-    simulatedCount: rows.filter((row) => row.isSimulated === 1).length,
+    totalExpected: run.totalExpected, completed: counts?.completed ?? 0,
+    simulatedCount: counts?.simulatedCount ?? 0,
   };
 }

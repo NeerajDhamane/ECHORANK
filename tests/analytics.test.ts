@@ -119,4 +119,18 @@ describe("analytics scope and metrics", () => {
     expect(overview.sources.map((source) => [source.domain, source.usedPercent])).toEqual([["docs.example", 50]]);
     expect(overview.recentChats.map((chat) => chat.id)).toEqual(["c5", "c1"]);
   });
+
+  it("uses the brand and citation indexes for scoped analytics reads", () => {
+    const db = setup();
+    const where = whereClause({ brandId: "own" });
+    const plan = db.prepare(`EXPLAIN QUERY PLAN SELECT c.run_id FROM chats AS c
+      JOIN tracking_runs AS r ON r.id = c.run_id ${where.sql}`).all(where.params) as Array<{ detail: string }>;
+    expect(plan.some(({ detail }) => detail.includes("idx_chats_brand"))).toBe(true);
+
+    const sourcePlan = db.prepare(`EXPLAIN QUERY PLAN SELECT s.domain, COUNT(DISTINCT cs.chat_id)
+      FROM chats AS c JOIN chat_sources AS cs ON cs.chat_id = c.id
+      JOIN sources AS s ON s.id = cs.source_id ${where.sql} GROUP BY s.id`).all(where.params) as Array<{ detail: string }>;
+    expect(sourcePlan.some(({ detail }) => detail.includes("idx_chats_brand"))).toBe(true);
+    expect(sourcePlan.some(({ detail }) => detail.includes("sqlite_autoindex_chat_sources_1"))).toBe(true);
+  });
 });

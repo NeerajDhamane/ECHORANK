@@ -232,3 +232,11 @@ Format per entry:
 - Decisions/deviations: No new dependencies or schema changes. The one-time plaintext API key remains returned on creation by design; its stored hash is excluded.
 - Learnings: Even when a helper currently returns a safe shape, an API route should whitelist response fields so later additions cannot accidentally disclose internal data.
 - Next: T037
+## 2026-10-14  T037  Performance & cost pass  [done]
+- Changed: Bounded tracking runs to 50 active prompts and 5 providers (current registry maximum); aggregated chat completion/simulated counts for recent runs in one grouped query instead of one query per run. Run status also uses an aggregate query.
+- Verified: `EXPLAIN QUERY PLAN` regression checks confirm analytics scopes use `idx_chats_brand`; citation analytics uses the chat-source primary-key index. Recent-run regression covers populated and empty counts. Tracking test confirms the 50×5 cap. Public-check tests continue to confirm cached repeats make zero provider calls; its existing cache is keyed by a hash and expires after 24 hours.
+- List/cost audit: Run list is now bounded to 50 rows and uses two database reads regardless of row count; prompt/topic list paths use fixed queries rather than per-row lookups. Provider calls are capped at 250 per run and real calls retain the 2.2-second throttle.
+- Verified: `npm run verify` passed: typecheck, lint, 193 tests across 47 files, and production build. The initial sandboxed Vitest invocation hit Windows `EPERM` resolving `node_modules`; the elevated rerun completed successfully.
+- Decisions/deviations: No schema or dependency changes. Prompt/provider ceilings align with the existing small free-tier scope and current provider registry; extending providers requires revisiting the explicit cap.
+- Learnings: Recent-run status counts can be returned with one indexed grouped query because chats already have `idx_chats_run`.
+- Next: T038

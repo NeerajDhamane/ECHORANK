@@ -6,7 +6,7 @@ import { migrateDatabase } from "@/db/migrate";
 import { brands, chats, prompts, schema, trackingRuns } from "@/db/schema";
 import { createMockProvider, MOCK_PLATFORMS } from "@/lib/providers/mock";
 import type { AIProvider } from "@/lib/providers/types";
-import { createTrackingRun, getRunStatus, runTracking } from "@/lib/tracking";
+import { createTrackingRun, getRecentRuns, getRunStatus, MAX_PROMPTS_PER_RUN, MAX_PROVIDERS_PER_RUN, runTracking } from "@/lib/tracking";
 import { persistSources } from "@/lib/analysis/citations";
 
 describe("tracking orchestration", () => {
@@ -84,5 +84,40 @@ describe("tracking orchestration", () => {
     const providers = [createMockProvider("one", "One"), createMockProvider("two", "Two")];
     const created = createTrackingRun("brand-acme", providers, database);
     expect(database.select().from(trackingRuns).where(eq(trackingRuns.id, created.runId)).get()?.totalExpected).toBe(2);
+  });
+
+  it("bounds prompt/provider work and processes at most 50 by 5 pairs", async () => {
+    const database = setup();
+    database.insert(prompts).values(Array.from({ length: MAX_PROMPTS_PER_RUN }, (_, index) => ({
+      id: `extra-${index}`, brandId: "brand-acme", text: `Extra prompt ${index}`, status: "active" as const,
+    }))).run();
+    let calls = 0;
+    const providers: AIProvider[] = Array.from({ length: MAX_PROVIDERS_PER_RUN + 1 }, (_, index) => ({
+      id: `provider-${index}`, label: `Provider ${index}`, isMock: true,
+      async run() { calls += 1; return "No mention found."; },
+    }));
+    const created = createTrackingRun("brand-acme", providers, database);
+    expect(created.totalExpected).toBe(MAX_PROMPTS_PER_RUN * MAX_PROVIDERS_PER_RUN);
+    await runTracking(created.runId, {
+      id: "brand-acme", userId: "user-1", ownerBrandId: null, name: "Acme", aliases: ["Acme Cloud"],
+      website: "https://acme.example", industry: "cloud hosting", autoTrack: 0, trackFrequency: "daily",
+      deletedAt: null, createdAt: null,
+    }, providers, { database, saveSources: () => undefined });
+    expect(calls).toBe(MAX_PROMPTS_PER_RUN * MAX_PROVIDERS_PER_RUN);
+    expect(getRunStatus(created.runId, database)?.completed).toBe(calls);
+  });
+
+  it("loads recent run chat counts with correct simulated totals", () => {
+    const database = setup();
+    const first = createTrackingRun("brand-acme", [createMockProvider("one", "One")], database);
+    const second = createTrackingRun("brand-acme", [createMockProvider("one", "One")], database);
+    database.insert(chats).values([
+      { id: "recent-1", runId: first.runId, promptId: "prompt-active", brandId: "brand-acme", platform: "One", isSimulated: 1 },
+      { id: "recent-2", runId: first.runId, promptId: "prompt-active", brandId: "brand-acme", platform: "One", isSimulated: 0 },
+    ]).run();
+    expect(getRecentRuns("brand-acme", 10, database)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ runId: first.runId, completed: 2, simulatedCount: 1 }),
+      expect.objectContaining({ runId: second.runId, completed: 0, simulatedCount: 0 }),
+    ]));
   });
 });
