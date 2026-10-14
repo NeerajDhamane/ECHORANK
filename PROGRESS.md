@@ -240,3 +240,11 @@ Format per entry:
 - Decisions/deviations: No schema or dependency changes. Prompt/provider ceilings align with the existing small free-tier scope and current provider registry; extending providers requires revisiting the explicit cap.
 - Learnings: Recent-run status counts can be returned with one indexed grouped query because chats already have `idx_chats_run`.
 - Next: T038
+### BLOCKERS (resolved for T038)
+- The original T038 wording required recommendation evidence in a zero-key seeded demo, but recommendations correctly exclude simulated answers. Following the user's “do then” direction, T038 now accepts the truthful empty state for zero-key demos and evidence only when eligible real data already exists; no fake evidence or live API call is needed.
+## 2026-10-14  T038  Demo script & demo mode  [done]
+- Changed: Added `docs/DEMO.md` with setup, the requested eight-stop five-minute walkthrough, and offline fallbacks. Recommendation presentation uses the empty state for simulated-only seed data and opens evidence only when eligible real data exists. Crawl fetch is explicitly the only network-dependent demo step; report print follows the actual Download PDF control.
+- Verified: `npm run verify` passed: typecheck, lint, 193 tests across 47 files, and production build. Cross-checked seed credentials/brand ID, workspace routes and controls, recommendation real-data requirement, and research page empty state against implementation.
+- Decisions/deviations: Adjusted T038 acceptance to allow the truthful zero-key recommendation empty state; recommendation logic intentionally excludes simulated answers. No code, schema, or dependency changes.
+- Learnings: A zero-key demo must preserve the simulated-data boundary even when the recommendations page has no evidence cards.
+- Next: Human tasks H1–H10.
