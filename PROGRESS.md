@@ -226,3 +226,9 @@ Format per entry:
 - Decisions/deviations: No dependencies or schema changes. Mobile filter controls reuse existing URL-backed filters.
 - Learnings: Hiding shared filters at mobile breakpoints had removed access to filtering entirely; rendering the same controls in a compact mobile row preserves the existing URL behavior.
 - Next: T036
+## 2026-10-14  T036  Security test suite  [done]
+- Changed: Added a table-driven route sweep for all 50 brand-scoped handler methods, including session and REST v1 ownership checks and run-to-brand ownership checks. Added API-key response serialization checks; the first run exposed that key creation returned any extra fields from its creator, so the route now whitelists the one-time token and public metadata.
+- Verified: `npm run verify` passed: typecheck, lint, 190 tests across 47 files, and production build. Existing security tests cover 20 SSRF cases and redirect/DNS protections, all formula prefixes for CSV cells, per-IP/hour and daily API-key rate limits, and no plaintext or hashed API keys in listing/creation responses.
+- Decisions/deviations: No new dependencies or schema changes. The one-time plaintext API key remains returned on creation by design; its stored hash is excluded.
+- Learnings: Even when a helper currently returns a safe shape, an API route should whitelist response fields so later additions cannot accidentally disclose internal data.
+- Next: T037

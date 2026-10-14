@@ -18,5 +18,6 @@ export async function POST(request: Request): Promise<Response> {
   if (body.response) return body.response;
   const parsed = createSchema.safeParse(body.value);
   if (!parsed.success) return error("Provide a key label up to 60 characters.");
-  return json(createUserApiKey(user.id, parsed.data.label), 201);
+  const created = createUserApiKey(user.id, parsed.data.label);
+  return json({ id: created.id, token: created.token, label: created.label, createdAt: created.createdAt }, 201);
 }
